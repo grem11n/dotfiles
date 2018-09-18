@@ -1,0 +1,24 @@
+[core]
+	excludesfile = /Users/yurii.rochniak/.gitignore_global
+	editor = /usr/local/bin/vim
+[difftool "sourcetree"]
+	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
+	path =
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
+[yurii]
+	rochniak = Yurii Rochniak
+[user]
+	email = yrochnyak@gmail.com
+	name = Yurii Rochniak
+[push]
+	default = matching
+[alias]
+	st = status
+	ci = commit
+	pr = pull --rebase
+        chk = checkout
+        br = branch
+[merge]
+	conflictstyle = diff3

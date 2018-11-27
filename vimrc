@@ -40,15 +40,17 @@ Plugin 'airblade/vim-gitgutter'
 Plugin 'haya14busa/incsearch.vim'
 Plugin 'martinda/Jenkinsfile-vim-syntax'
 Plugin 'vim-voom/VOoM'
-" Plugin 'Yggdroot/indentLine'
+Plugin 'Yggdroot/indentLine'
 Plugin 'junegunn/fzf.vim'
 Plugin 'kassio/neoterm'
 Plugin 'euclio/vim-markdown-composer'
 Plugin 'w0rp/ale'
-Plugin 'nathanaelkane/vim-indent-guides'
+"Plugin 'nathanaelkane/vim-indent-guides'
 Plugin 'mcchrish/nnn.vim'
 Plugin 'ryanoasis/vim-devicons'
-Plugin 'https://gitlab.com/Lenovsky/nuake.git'
+if has('nvim')
+  Plugin 'https://gitlab.com/Lenovsky/nuake.git'
+endif
 " Test
 Plugin 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
@@ -315,3 +317,9 @@ endif
 
 " Nuake
 call SetupCommandAlias("term","Nuake")
+
+" indentLine
+let g:indentLine_char = '┆'
+let g:indentLine_enabled = 1
+let g:indentLine_concealcursor = 'inc'
+let g:indentLine_conceallevel = 2

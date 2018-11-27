@@ -2,6 +2,8 @@ if has('python2')
   silent! python3 1
 endif
 set nocompatible              " be iMproved, required
+set wildignorecase
+set number
 filetype off                  " required
 filetype plugin on
 
@@ -23,42 +25,45 @@ Plugin 'Xuyuanp/nerdtree-git-plugin'
 Plugin 'vim-airline/vim-airline'
 Plugin 'sjl/badwolf'
 Plugin 'fatih/vim-go'
-Plugin 'ctrlpvim/ctrlp.vim'
-Plugin 'JamshedVesuna/vim-markdown-preview'
 Plugin 'jamessan/vim-gnupg'
-Plugin 'hail2u/vim-css3-syntax'
-Plugin 'mattn/emmet-vim'
-Plugin 'tpope/vim-surround'
-Plugin 'Shutnik/jshint2.vim'
-Plugin 'skammer/vim-css-color'
-Plugin 'wavded/vim-stylus'
 Plugin 'majutsushi/tagbar'
 Plugin 'xolox/vim-misc'
 Plugin 'xolox/vim-easytags'
 Plugin 'hashivim/vim-terraform'
 Plugin 'fidian/hexmode'
 Plugin 'bash-support.vim'
-Plugin 'neomake/neomake'
 Plugin 'rust-lang/rust.vim'
 Plugin 'rodjek/vim-puppet'
 Plugin 'Konfekt/FastFold'
-Plugin 'editorconfig/editorconfig-vim'
+"Plugin 'editorconfig/editorconfig-vim'
 Plugin 'airblade/vim-gitgutter'
 Plugin 'haya14busa/incsearch.vim'
-Plugin 'vim-scripts/Conque-Shell'
 Plugin 'martinda/Jenkinsfile-vim-syntax'
 Plugin 'vim-voom/VOoM'
-Plugin 'Yggdroot/indentLine'
-Plugin 'rking/ag.vim'
+" Plugin 'Yggdroot/indentLine'
 Plugin 'junegunn/fzf.vim'
+Plugin 'kassio/neoterm'
+Plugin 'euclio/vim-markdown-composer'
+Plugin 'w0rp/ale'
+Plugin 'nathanaelkane/vim-indent-guides'
+Plugin 'mcchrish/nnn.vim'
+Plugin 'ryanoasis/vim-devicons'
+Plugin 'https://gitlab.com/Lenovsky/nuake.git'
 " Test
- if has('nvim')
-   Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
- else
-   Plugin 'Shougo/deoplete.nvim'
-   Plugin 'roxma/nvim-yarp'
-   Plugin 'roxma/vim-hug-neovim-rpc'
+Plugin 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
+Plugin 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
+if !has('nvim')
+  Plugin 'roxma/nvim-yarp'
+  Plugin 'roxma/vim-hug-neovim-rpc'
+else
+    Plugin 'Shougo/neocomplete.vim'
+"   Plugin 'Shougo/deoplete.nvim'
+"   Plugin 'roxma/nvim-yarp'
+"   Plugin 'roxma/vim-hug-neovim-rpc'
 endif
+Plugin 'Shougo/neosnippet.vim'
+Plugin 'Shougo/neosnippet-snippets'
+
 let g:deoplete#enable_at_startup = 1
 
 "" User Functions
@@ -69,9 +74,6 @@ fun! SetupCommandAlias(from, to)
         \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")'
         \ .'? ("'.a:to.'") : ("'.a:from.'"))'
 endfun
-
-" Alias for CounqueTerm
-call SetupCommandAlias("ct","ConqueTermSplit bash")
 
 " Configuration for Backspace key
 set backspace=start,eol,indent
@@ -242,23 +244,6 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-"" Neomake
-
-" When writing a buffer.
-call neomake#configure#automake('w')
-" When writing a buffer, and on normal mode changes (after 750ms).
-call neomake#configure#automake('nw', 750)
-" When reading a buffer (after 1s), and when writing.
-call neomake#configure#automake('rw', 1000)
-let g:neomake_python_enabled_makers = ['pylint']
-let g:neomake_warning_sign={'text': '>>'}
-let g:neomake_error_sign={'text': '✗'}
-let g:neomake_open_list = 2
-augroup my_neomake_qf
-    autocmd!
-    autocmd QuitPre * if &filetype !=# 'qf' | lclose | endif
-augroup END
-
 "" Golang
 
 let $GOPATH = "/Users/yurii.rochniak/Golang"
@@ -277,4 +262,56 @@ let g:ackprg = 'ag --nogroup --nocolor --column'
 
 "" FZF
 
-let g:fzf_command_prefix = 'Fzf'
+"let g:fzf_command_prefix = 'Fzf'
+nnoremap <C-p> :Files<CR>
+
+"" Ale
+let g:airline#extensions#ale#enabled = 1
+let g:ale_open_list = 1
+let g:ale_lint_on_text_changed = 'never'
+let g:ale_lint_on_enter = 1
+let g:ale_keep_list_window_open = 1
+let g:ale_lint_on_save = 1
+autocmd QuitPre * if empty(&bt) | lclose | endif
+let g:ale_linters = {'rust': ['rustc', 'rustfmt']}
+
+"" Test IndentGuide
+let g:indent_guides_enable_on_vim_startup = 1
+set ts=4 sw=4 et
+let g:indent_guides_start_level = 2
+let g:indent_guides_guide_size = 1
+let g:indent_guides_auto_colors = 0
+autocmd VimEnter,Colorscheme * :hi IndentGuidesOdd ctermbg=lightgrey
+autocmd VimEnter,Colorscheme * :hi IndentGuidesEven ctermbg=darkgrey
+
+" Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
+command! -bang -nargs=* Rg
+  \ call fzf#vim#grep(
+  \   'rg --column --line-number --no-heading --color=always --smart-case '.shellescape(<q-args>), 1,
+  \   <bang>0 ? fzf#vim#with_preview('up:60%')
+  \           : fzf#vim#with_preview('right:50%:hidden', '?'),
+  \   <bang>0)
+
+" Neosnippet
+" Plugin key-mappings.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+imap <C-k>     <Plug>(neosnippet_expand_or_jump)
+smap <C-k>     <Plug>(neosnippet_expand_or_jump)
+xmap <C-k>     <Plug>(neosnippet_expand_target)
+
+" SuperTab like snippets behavior.
+" Note: It must be "imap" and "smap".  It uses <Plug> mappings.
+"imap <expr><TAB>
+" \ pumvisible() ? "\<C-n>" :
+" \ neosnippet#expandable_or_jumpable() ?
+" \    "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+smap <expr><TAB> neosnippet#expandable_or_jumpable() ?
+\ "\<Plug>(neosnippet_expand_or_jump)" : "\<TAB>"
+
+" For conceal markers.
+if has('conceal')
+  set conceallevel=2 concealcursor=niv
+endif
+
+" Nuake
+call SetupCommandAlias("term","Nuake")

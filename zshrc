@@ -117,6 +117,33 @@ function pubip {
         aws ec2 describe-instances --query 'Reservations[].Instances[].PublicIpAddress' --output text --instance-ids $1 --region $region --profile $profile
   fi
 }
+
+# Set k8s namespace
+function kns {
+    if [ $# -eq 0 ] ; then
+        echo "No namepsace specified!"
+    fi
+    if [ $# -gt 1 ] ; then
+        echo "You may specify only one namespace!"
+    fi
+    if [ $# -eq 1 ] ; then
+        kubectl config set-context $(kubectl config current-context) --namespace=$1
+    fi
+}
+
+# k8s context
+function kontext {
+    if [ $# -ne 1 ]; then
+        echo "Please, specify which cluster do you want: dev/prod"
+    fi
+    if [ $1 = 'dev' ]; then
+        kubectl config use-context k8s-dev.preply.org
+    elif [ $1 = 'prod' ]; then
+        kubectl config use-context k8s-prod.preply.org
+    else
+        echo "Unknown context. Must be either dev or prod"
+    fi
+}
 # Tmux:
 alias tmux="TERM=screen-256color tmux"
 
@@ -144,4 +171,14 @@ fpath+=${ZDOTDIR:-~}/.zsh_functions
 #if command -v tmux>/dev/null; then
 #  [[ ! $TERM =~ screen ]] && [ -z $TMUX ] && exec tmux ||:
 #fi
-[ -z "$TMUX"  ] && { tmux attach || exec tmux new-session && exit;}
+#[ -z "$TMUX"  ] && { tmux attach || exec tmux new-session && exit;}
+
+alias vim="nvim" # coz I always mess up with it
+alias gonvim="/Applications/gonvim.app/Contents/MacOS/gonvim > /dev/null 2>&1 &"
+
+# Kube
+source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+PS1='$(kube_ps1)'$PS1
+alias kc="kubectl"
+
+export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"

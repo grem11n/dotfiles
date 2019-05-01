@@ -149,10 +149,11 @@ nnoremap <C-p> :Files<CR>
 
 "" Ale
 let g:airline#extensions#ale#enabled = 1
-let g:ale_open_list = 1
 let g:ale_lint_on_text_changed = 'never'
 let g:ale_lint_on_enter = 1
-let g:ale_keep_list_window_open = 1
+let g:ale_open_list = 1
+let g:ale_list_window_size = 5
+let g:ale_keep_list_window_open = 0
 let g:ale_lint_on_save = 1
 autocmd QuitPre * if empty(&bt) | lclose | endif
 let g:ale_linters = {'rust': ['rustc', 'rustfmt']}
@@ -185,9 +186,7 @@ let g:coc_global_extensions = [
         \ 'coc-dictionary',
         \ 'coc-word',
         \ 'coc-gocode',
-        \ 'coc-json',
         \ 'coc-rls',
-        \ 'coc-yaml',
         \ 'coc-python',
         \ 'coc-highlight'
         \]

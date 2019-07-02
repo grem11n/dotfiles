@@ -49,7 +49,7 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws common-aliases encode64 gem pip python rsync screen sudo terraform tmux vagrant brew docker ansible-role-zsh kubectl kops)
+plugins=(git aws common-aliases encode64 gem pip python rsync sudo terraform tmux vagrant brew docker kubectl kops helm zsh-autosuggestions fzf)
 # User configuration
 
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
@@ -100,6 +100,8 @@ alias mtr="sudo /usr/local/sbin/mtr"
 alias flush_dns="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder"
 alias srk="ssh-keygen -R"
 alias sshq="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
+alias dev-env="source ~/.preply/dev.env"
+alias db-local="source ~/.preply/db_local.env"
 alias d="dirs -v"
 
 #Golang
@@ -118,37 +120,11 @@ function pubip {
   fi
 }
 
-# Set k8s namespace
-function kns {
-    if [ $# -eq 0 ] ; then
-        echo "No namepsace specified!"
-    fi
-    if [ $# -gt 1 ] ; then
-        echo "You may specify only one namespace!"
-    fi
-    if [ $# -eq 1 ] ; then
-        kubectl config set-context $(kubectl config current-context) --namespace=$1
-    fi
-}
-
-# k8s context
-function kontext {
-    if [ $# -ne 1 ]; then
-        echo "Please, specify which cluster do you want: dev/prod"
-    fi
-    if [ $1 = 'dev' ]; then
-        kubectl config use-context k8s-dev.preply.org
-    elif [ $1 = 'prod' ]; then
-        kubectl config use-context k8s-prod.preply.org
-    else
-        echo "Unknown context. Must be either dev or prod"
-    fi
-}
 # Tmux:
 alias tmux="TERM=screen-256color tmux"
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/Cellar/terraform/0.11.2/bin/terraform terraform
+complete -o nospace -C /usr/local/Cellar/terraform/0.11.11/bin/terraform terraform
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -158,7 +134,7 @@ complete -o nospace -C /usr/local/Cellar/terraform/0.11.2/bin/terraform terrafor
 [[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-PROMPT='%{$fg_bold[blue]%} %* % %{$reset_color%}${ret_status}%{$fg_bold[green]%}%p %{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
+PROMPT='%{$fg_bold[blue]%} %* % %{$reset_color%}${ret_status}%{$fg_bold[green]%}%p%{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -177,8 +153,54 @@ alias vim="nvim" # coz I always mess up with it
 alias gonvim="/Applications/gonvim.app/Contents/MacOS/gonvim > /dev/null 2>&1 &"
 
 # Kube
-source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
-PS1='$(kube_ps1)'$PS1
+# source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+# PS1='$(kube_ps1)'$PS1
 alias kc="kubectl"
 
+# Set k8s namespace
+function kns {
+    if [ $# -eq 0 ] ; then
+        echo "No namepsace specified!"
+    fi
+    if [ $# -gt 1 ] ; then
+        echo "You may specify only one namespace!"
+    fi
+    if [ $# -eq 1 ] ; then
+        kubectl config set-context $(kubectl config current-context) --namespace=$1
+    fi
+}
+
+# k8s context
+function kontext {
+    if [ $# -ne 1 ]; then
+        echo "Please, specify which cluster do you want: dev/stage/prod"
+    fi
+    if [ $1 = 'dev' ]; then
+        kubectl config use-context k8s-dev.preply.org
+    elif [ $1 = 'stage' ]; then
+        kubectl config use-context k8s-stage.preply.org
+    elif [ $1 = 'prod' ]; then
+        kubectl config use-context k8s-prod.preply.org
+    elif [ $1 = 'production' ]; then
+        kubectl config use-context k8s-production.preply.org
+    elif [ $1 = 'eks' ]; then
+	kubectl config use-context arn:aws:eks:eu-west-1:537716077656:cluster/k8-eks-stage
+    else
+        echo "Unknown context. Must be either dev or prod"
+    fi
+}
+
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
+
+# Kitty
+autoload -Uz compinit
+compinit
+# Completion for kitty
+kitty + complete setup zsh | source /dev/stdin
+alias kdiff="kitty +kitten diff"
+# SSH fix for Kitty
+alias ssh="kitty +kitten ssh"
+# krew
+export PATH="$PATH:$HOME/.krew/bin"
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"

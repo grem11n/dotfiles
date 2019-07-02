@@ -3,7 +3,6 @@ if has('python2')
 endif
 set nocompatible              " be iMproved, required
 set wildignorecase
-set number
 filetype off                  " required
 filetype plugin on
 
@@ -13,18 +12,20 @@ nnoremap <C-K> <C-W><C-K>
 nnoremap <C-L> <C-W><C-L>
 nnoremap <C-H> <C-W><C-H>
 
-" set the runtime path to include Vundle and initialize
+" Find and Shell
 set rtp+=/usr/local/opt/fzf
 set shell=/usr/local/bin/zsh
 
 " Plug as a plugin managet
 call plug#begin()
 
+Plug 'NLKNguyen/papercolor-theme'
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'vim-airline/vim-airline'
-Plug 'sjl/badwolf'
+"Plug 'vim-airline/vim-airline'
+"Plug 'vim-airline/vim-airline-themes'
+"Plug 'sjl/badwolf'
 Plug 'fatih/vim-go'
 Plug 'jamessan/vim-gnupg'
 Plug 'majutsushi/tagbar'
@@ -35,12 +36,12 @@ Plug 'fidian/hexmode'
 Plug 'rust-lang/rust.vim'
 Plug 'rodjek/vim-puppet'
 Plug 'Konfekt/FastFold'
-"Plugin 'editorconfig/editorconfig-vim'
+Plug 'editorconfig/editorconfig-vim'
 Plug 'airblade/vim-gitgutter'
 Plug 'haya14busa/incsearch.vim'
 Plug 'martinda/Jenkinsfile-vim-syntax'
 Plug 'vim-voom/VOoM'
-Plug 'Yggdroot/indentLine'
+" Plug 'Yggdroot/indentLine'
 Plug 'junegunn/fzf.vim'
 Plug 'euclio/vim-markdown-composer'
 Plug 'JamshedVesuna/vim-markdown-preview'
@@ -51,6 +52,9 @@ if has('nvim')
 endif
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
 Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
+Plug 'dyng/ctrlsf.vim'
+Plug 'rhysd/git-messenger.vim'
+Plug 'rbong/vim-crystalline'
 
 call plug#end()
 
@@ -69,18 +73,33 @@ call SetupCommandAlias("nt","NERDTree")
 " Alias for JSON pretty print
 call SetupCommandAlias("ppj", "%!python -m json.tool")
 
-
 " Configuration for Backspace key
 set backspace=start,eol,indent
 
-"" Colors config
 
+"" Theme config
 syntax enable
+set number
 set background=dark
-colorscheme badwolf
+colorscheme PaperColor
+
+let g:airline_theme='papercolor'
+
+let g:PaperColor_Theme_Options = {
+  \   'language': {
+  \     'python': {
+  \       'highlight_builtins' : 1
+  \     },
+  \     'cpp': {
+  \       'highlight_standard_library': 1
+  \     },
+  \     'c': {
+  \       'highlight_builtins' : 1
+  \     }
+  \   }
+  \ }
 
 "" Pathogen part (needed for colorscheme?)
-
 execute pathogen#infect()
 set wildmenu
 set wildmode=list:longest
@@ -110,6 +129,7 @@ let g:airline#extensions#syntastic#enabled = 1
 let g:airline#extensions#tabline#enabled = 1
 " Show just the filename
 let g:airline#extensions#tabline#fnamemod = ':t'
+
 " Find and highlight trailing whitespaces
 :highlight ExtraWhitespace ctermbg=red guibg=red
 :match ExtraWhitespace /\s\+$/
@@ -144,8 +164,8 @@ let g:go_highlight_build_constraints = 1
 au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 
 "" FZF
-"let g:fzf_command_prefix = 'Fzf'
-nnoremap <C-p> :Files<CR>
+let g:fzf_command_prefix = 'Fzf'
+nnoremap <C-p> :FzfFiles<CR>
 
 "" Ale
 let g:airline#extensions#ale#enabled = 1
@@ -156,7 +176,14 @@ let g:ale_list_window_size = 5
 let g:ale_keep_list_window_open = 0
 let g:ale_lint_on_save = 1
 autocmd QuitPre * if empty(&bt) | lclose | endif
-let g:ale_linters = {'rust': ['rustc', 'rustfmt']}
+let g:ale_linters = {
+  \ 'rust': [
+  \   'rustc',
+  \   'rustfmt'],
+  \ 'python': [
+  \   'flake8',
+  \   'pylint']
+  \}
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
@@ -173,7 +200,7 @@ inoremap <C-\> <C-\><C-n>:Nuake<CR>
 tnoremap <C-\> <C-\><C-n>:Nuake<CR>
 
 " indentLine
-let g:indentLine_char = '┆'
+let g:indentLine_char = '|'
 let g:indentLine_enabled = 1
 let g:indentLine_concealcursor = 'inc'
 let g:indentLine_conceallevel = 0
@@ -215,3 +242,45 @@ inoremap <silent><expr> <TAB>
       \ coc#refresh()
 
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" Test CrystalLine
+function! StatusLine(current, width)
+  let l:s = ''
+
+  if a:current
+    let l:s .= crystalline#mode() . crystalline#right_mode_sep('')
+  else
+    let l:s .= '%#CrystallineInactive#'
+  endif
+  let l:s .= ' %f%h%w%m%r '
+  if a:current
+    let l:s .= crystalline#right_sep('', 'Fill') . ' %{fugitive#head()}'
+  endif
+
+  let l:s .= '%='
+  if a:current
+    let l:s .= crystalline#left_sep('', 'Fill') . ' %{&paste ?"PASTE ":""}%{&spell?"SPELL ":""}'
+    let l:s .= crystalline#left_mode_sep('')
+  endif
+  if a:width > 80
+    let l:s .= ' %{&ft}[%{&enc}][%{&ffs}] %l/%L %c%V %P '
+  else
+    let l:s .= ' '
+  endif
+
+  return l:s
+endfunction
+
+function! TabLine()
+  let l:vimlabel = has('nvim') ?  ' NVIM ' : ' VIM '
+  return crystalline#bufferline(2, len(l:vimlabel), 1) . '%=%#CrystallineTab# ' . l:vimlabel
+endfunction
+
+let g:crystalline_enable_sep = 1
+let g:crystalline_statusline_fn = 'StatusLine'
+let g:crystalline_tabline_fn = 'TabLine'
+let g:crystalline_theme = 'papercolor'
+
+set showtabline=2
+set guioptions-=e
+set laststatus=2

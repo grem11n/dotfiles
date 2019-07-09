@@ -23,9 +23,6 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-"Plug 'vim-airline/vim-airline'
-"Plug 'vim-airline/vim-airline-themes'
-"Plug 'sjl/badwolf'
 Plug 'fatih/vim-go'
 Plug 'jamessan/vim-gnupg'
 Plug 'majutsushi/tagbar'
@@ -43,8 +40,18 @@ Plug 'martinda/Jenkinsfile-vim-syntax'
 Plug 'vim-voom/VOoM'
 " Plug 'Yggdroot/indentLine'
 Plug 'junegunn/fzf.vim'
-Plug 'euclio/vim-markdown-composer'
-Plug 'JamshedVesuna/vim-markdown-preview'
+function! BuildComposer(info)
+  if a:info.status != 'unchanged' || a:info.force
+    if has('nvim')
+      !cargo build --release
+    else
+      !cargo build --release --no-default-features --features json-rpc
+    endif
+  endif
+endfunction
+
+Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
+"Plug 'JamshedVesuna/vim-markdown-preview'
 Plug 'w0rp/ale'
 Plug 'ryanoasis/vim-devicons'
 if has('nvim')
@@ -55,6 +62,9 @@ Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
 Plug 'dyng/ctrlsf.vim'
 Plug 'rhysd/git-messenger.vim'
 Plug 'rbong/vim-crystalline'
+Plug 'ekalinin/Dockerfile.vim'
+Plug 'stephpy/vim-yaml'
+Plug 'saltstack/salt-vim'
 
 call plug#end()
 
@@ -99,8 +109,6 @@ let g:PaperColor_Theme_Options = {
   \   }
   \ }
 
-"" Pathogen part (needed for colorscheme?)
-execute pathogen#infect()
 set wildmenu
 set wildmode=list:longest
 set laststatus=2
@@ -284,3 +292,13 @@ let g:crystalline_theme = 'papercolor'
 set showtabline=2
 set guioptions-=e
 set laststatus=2
+
+"" Vagrantfile
+augroup vagrant
+	au!
+	au BufRead,BufNewFile Vagrantfile set filetype=ruby
+augroup END
+
+"" Markdown Composer
+let g:markdown_composer_autostart = 0
+map <C-m> :ComposerStart<CR>

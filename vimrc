@@ -161,7 +161,7 @@ let vim_markdown_preview_github=1
 let g:EditorConfig_exclude_patterns = ['scp://.*']
 
 "" Golang
-let $GOPATH = "/Users/yurii.rochniak/Golang"
+let $GOPATH = "$HOME/Golang"
 let g:go_fmt_command = "goimports"
 "let g:go_fmt_command = "gofmt"
 let g:go_highlight_functions = 1
@@ -220,7 +220,7 @@ let g:nuake_per_tab = 1
 let g:coc_global_extensions = [
         \ 'coc-dictionary',
         \ 'coc-word',
-        \ 'coc-gocode',
+        "\ 'coc-gocode',
         \ 'coc-rls',
         \ 'coc-python',
         \ 'coc-highlight'
@@ -301,4 +301,39 @@ augroup END
 
 "" Markdown Composer
 let g:markdown_composer_autostart = 0
-map <C-m> :ComposerStart<CR>
+
+" autosave delay, cursorhold trigger, default: 4000ms
+setl updatetime=300
+
+" highlight the word under cursor (CursorMoved is inperformant)
+highlight WordUnderCursor cterm=underline gui=underline
+autocmd CursorHold * call HighlightCursorWord()
+function! HighlightCursorWord()
+    " if hlsearch is active, don't overwrite it!
+    let search = getreg('/')
+    let cword = expand('<cword>')
+    if match(cword, search) == -1
+        exe printf('match WordUnderCursor /\V\<%s\>/', escape(cword, '/\'))
+    endif
+endfunction
+
+" " Terraform formatting
+" " Ensure no conflict with arguments from the environment
+" let $TF_CLI_ARGS_fmt=''
+" command! -nargs=0 -buffer TerraformFmt call Terraform_fmt()
+" function! Terraform_fmt()
+"   if !filereadable(expand('%:p'))
+"     return
+"   endif
+"   let l:curw = winsaveview()
+"   " Make a fake change so that the undo point is right.
+"   normal! ix
+"   normal! "_x
+"   silent execute '%!terraform fmt -no-color -'
+"   if v:shell_error != 0
+"     let output = getline(1, '$')
+"     silent undo
+"     echo join(output, "\n")
+"   endif
+"   call winrestview(l:curw)
+" endfunction

@@ -1,5 +1,7 @@
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/yurii.rochniak/.oh-my-zsh
+export ZPLUG_HOME=/usr/local/opt/zplug
+source $ZPLUG_HOME/init.zsh
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -49,14 +51,25 @@ ZSH_THEME="robbyrussell"
 # Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git aws common-aliases encode64 gem pip python rsync sudo terraform tmux vagrant brew docker kubectl kops helm zsh-autosuggestions fzf)
-# User configuration
+zplug "popstas/zsh-command-time"
+zplug "zpm-zsh/colorize"
+zplug "arzzen/calc.plugin.zsh"
+zplug "hlissner/zsh-autopair", defer:2
+zplug "zpm-zsh/tmux"
+zplug "droctothorpe/kubecolor"
+zplug "ael-code/zsh-colored-man-pages"
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
 
+plugins=(git aws common-aliases encode64 gem pip python rsync sudo terraform vagrant brew docker fzf vault)
+
+zplug load
+
+# User configuration
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
 export PATH="/usr/local/sbin:$PATH"
 ## Python binaries
 export PATH="/Users/yurii.rochniak/Library/Python/2.7/bin:$PATH"
-export PATH="/Users/yurii.rochniak/Library/Python/3.6/bin:$PATH"
+export PATH="/Users/yurii.rochniak/Library/Python/3.7/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 source $ZSH/oh-my-zsh.sh
 
@@ -95,7 +108,7 @@ fi
 
 export GPG_TTY=`tty`
 alias ll="ls -l"
-alias la="ls -la"
+alias la="ls -lah"
 alias mtr="sudo /usr/local/sbin/mtr"
 alias flush_dns="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder"
 alias srk="ssh-keygen -R"
@@ -124,7 +137,7 @@ function pubip {
 alias tmux="TERM=screen-256color tmux"
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/Cellar/terraform/0.11.11/bin/terraform terraform
+complete -o nospace -C /usr/local/Cellar/tfenv/1.0.1/bin/terraform terraform
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -134,7 +147,8 @@ complete -o nospace -C /usr/local/Cellar/terraform/0.11.11/bin/terraform terrafo
 [[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-PROMPT='%{$fg_bold[blue]%} %* % %{$reset_color%}${ret_status}%{$fg_bold[green]%}%p%{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
+local ret_status="%(?:%{$fg_bold[green]%}>> :%{$fg_bold[red]%}>> %s)"
+PROMPT='${ret_status}%{$fg_bold[blue]%}%* %{$reset_color%}%{$fg_bold[green]%}%p%{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
@@ -142,15 +156,7 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 eval $(thefuck --alias)
 fpath+=${ZDOTDIR:-~}/.zsh_functions
 
-# Tmux integration
-# Run Tmux on startup
-#if command -v tmux>/dev/null; then
-#  [[ ! $TERM =~ screen ]] && [ -z $TMUX ] && exec tmux ||:
-#fi
-#[ -z "$TMUX"  ] && { tmux attach || exec tmux new-session && exit;}
-
 alias vim="nvim" # coz I always mess up with it
-alias gonvim="/Applications/gonvim.app/Contents/MacOS/gonvim > /dev/null 2>&1 &"
 
 # Kube
 # source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
@@ -170,37 +176,30 @@ function kns {
     fi
 }
 
-# k8s context
-function kontext {
-    if [ $# -ne 1 ]; then
-        echo "Please, specify which cluster do you want: dev/stage/prod"
-    fi
-    if [ $1 = 'dev' ]; then
-        kubectl config use-context k8s-dev.preply.org
-    elif [ $1 = 'stage' ]; then
-        kubectl config use-context k8s-stage.preply.org
-    elif [ $1 = 'prod' ]; then
-        kubectl config use-context k8s-prod.preply.org
-    elif [ $1 = 'production' ]; then
-        kubectl config use-context k8s-production.preply.org
-    elif [ $1 = 'eks' ]; then
-	kubectl config use-context arn:aws:eks:eu-west-1:537716077656:cluster/k8-eks-stage
-    else
-        echo "Unknown context. Must be either dev or prod"
-    fi
-}
-
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
 
-# Kitty
-autoload -Uz compinit
-compinit
-# Completion for kitty
-kitty + complete setup zsh | source /dev/stdin
-alias kdiff="kitty +kitten diff"
-# SSH fix for Kitty
-alias ssh="kitty +kitten ssh"
-# krew
-export PATH="$PATH:$HOME/.krew/bin"
+if [ $TERM == 'xterm-kitty' ] ; then
+    # Kitty
+    autoload -Uz compinit
+    compinit
+    # Completion for kitty
+    kitty + complete setup zsh | source /dev/stdin
+    alias kdiff="kitty +kitten diff"
+    # SSH fix for Kitty
+    alias ssh="kitty +kitten ssh"
+    # krew
+    export PATH="$PATH:$HOME/.krew/bin"
+fi
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Tfenv
+export PATH="/usr/local/Cellar/tfenv/1.0.1/bin:$PATH"
+
+# Restart wifi
+function wifit () {
+        networksetup -setairportpower Wi-Fi off
+        sleep 1
+        networksetup -setairportpower Wi-Fi on
+}

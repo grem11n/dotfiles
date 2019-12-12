@@ -1,6 +1,16 @@
 [core]
-	excludesfile = /Users/yurii.rochniak/.gitignore_global
-	editor = /usr/local/bin/vim
+    excludesfile = /Users/yurii.rochniak/.gitignore
+    editor = /usr/local/bin/nvim
+[diff]
+    tool = kitty
+    guitool = kitty.gui
+[difftool]
+    prompt = false
+    trustExitCode = true
+[difftool "kitty"]
+    cmd = kitty +kitten diff $LOCAL $REMOTE
+[difftool "kitty.gui"]
+    cmd = kitty kitty +kitten diff $LOCAL $REMOTE
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path =
@@ -20,5 +30,8 @@
 	pr = pull --rebase
         chk = checkout
         br = branch
+        kd = difftool --no-symlinks --dir-diff
 [merge]
 	conflictstyle = diff3
+[diff "sopsdiffer"]
+	textconv = sops -d

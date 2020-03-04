@@ -3,6 +3,7 @@ if has('python2')
 endif
 set nocompatible              " be iMproved, required
 set wildignorecase
+set tabstop=4 shiftwidth=4 expandtab
 filetype off                  " required
 filetype plugin on
 
@@ -23,7 +24,7 @@ Plug 'NLKNguyen/papercolor-theme'
 Plug 'tpope/vim-fugitive'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'fatih/vim-go'
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'jamessan/vim-gnupg'
 Plug 'majutsushi/tagbar'
 Plug 'xolox/vim-misc'
@@ -58,13 +59,16 @@ if has('nvim')
   Plug 'https://gitlab.com/Lenovsky/nuake.git'
 endif
 Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
-Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'}
+" Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'} " Disabled because
+" causes issues
 Plug 'dyng/ctrlsf.vim'
 Plug 'rhysd/git-messenger.vim'
 Plug 'rbong/vim-crystalline'
 Plug 'ekalinin/Dockerfile.vim'
 Plug 'stephpy/vim-yaml'
 Plug 'saltstack/salt-vim'
+Plug 'chrisbra/vim-diff-enhanced'
+
 
 call plug#end()
 
@@ -86,12 +90,20 @@ call SetupCommandAlias("ppj", "%!python -m json.tool")
 " Configuration for Backspace key
 set backspace=start,eol,indent
 
+" Go to definition in vertical split
+map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
+
 
 "" Theme config
 syntax enable
 set number
 set background=dark
 colorscheme PaperColor
+" Fix for Vimr
+if match(expand('$VIM'), 'VimR.app') > -1
+    " set true color
+    set termguicolors
+endif
 
 let g:airline_theme='papercolor'
 
@@ -116,17 +128,18 @@ set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
 autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
 
 "" IncSearch
-map /  <Plug>(incsearch-forward)
-map ?  <Plug>(incsearch-backward)
-map g/ <Plug>(incsearch-stay)
+"map /  <Plug>(incsearch-forward)
+"map ?  <Plug>(incsearch-backward)
+"map g/ <Plug>(incsearch-stay)
 set hlsearch
-let g:incsearch#auto_nohlsearch = 1
-map n  <Plug>(incsearch-nohl-n)
-map N  <Plug>(incsearch-nohl-N)
-map *  <Plug>(incsearch-nohl-*)
-map #  <Plug>(incsearch-nohl-#)
-map g* <Plug>(incsearch-nohl-g*)
-map g# <Plug>(incsearch-nohl-g#)
+nnoremap <CR> :nohlsearch<CR><CR>
+"let g:incsearch#auto_nohlsearch = 1
+"map n  <Plug>(incsearch-nohl-n)
+"map N  <Plug>(incsearch-nohl-N)
+"map *  <Plug>(incsearch-nohl-*)
+"map #  <Plug>(incsearch-nohl-#)
+"map g* <Plug>(incsearch-nohl-g*)
+"map g# <Plug>(incsearch-nohl-g#)
 
 " Airline config
 let g:airline#extensions#bufferline#enabled = 1
@@ -163,7 +176,7 @@ let g:EditorConfig_exclude_patterns = ['scp://.*']
 "" Golang
 let $GOPATH = "$HOME/Golang"
 let g:go_fmt_command = "goimports"
-"let g:go_fmt_command = "gofmt"
+" let g:go_fmt_command = "gofmt"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
@@ -190,7 +203,9 @@ let g:ale_linters = {
   \   'rustfmt'],
   \ 'python': [
   \   'flake8',
-  \   'pylint']
+  \   'pylint'],
+  \ 'go': [
+  \    'gopls']
   \}
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
@@ -203,6 +218,8 @@ command! -bang -nargs=* Rg
 
 " Nuake
 call SetupCommandAlias("term","Nuake")
+let g:nuake_per_tab = 1
+let g:nuake_size = 0.3
 nnoremap <C-\> :Nuake<CR>
 inoremap <C-\> <C-\><C-n>:Nuake<CR>
 tnoremap <C-\> <C-\><C-n>:Nuake<CR>
@@ -213,14 +230,11 @@ let g:indentLine_enabled = 1
 let g:indentLine_concealcursor = 'inc'
 let g:indentLine_conceallevel = 0
 
-" Nuake
-let g:nuake_per_tab = 1
-
 "Coc.nvim
 let g:coc_global_extensions = [
         \ 'coc-dictionary',
         \ 'coc-word',
-        "\ 'coc-gocode',
+        \ 'coc-gocode',
         \ 'coc-rls',
         \ 'coc-python',
         \ 'coc-highlight'
@@ -317,23 +331,12 @@ function! HighlightCursorWord()
     endif
 endfunction
 
-" " Terraform formatting
-" " Ensure no conflict with arguments from the environment
-" let $TF_CLI_ARGS_fmt=''
-" command! -nargs=0 -buffer TerraformFmt call Terraform_fmt()
-" function! Terraform_fmt()
-"   if !filereadable(expand('%:p'))
-"     return
-"   endif
-"   let l:curw = winsaveview()
-"   " Make a fake change so that the undo point is right.
-"   normal! ix
-"   normal! "_x
-"   silent execute '%!terraform fmt -no-color -'
-"   if v:shell_error != 0
-"     let output = getline(1, '$')
-"     silent undo
-"     echo join(output, "\n")
-"   endif
-"   call winrestview(l:curw)
-" endfunction
+"" VimR colorscheme set 
+if has("gui_vimr")
+  set termguicolors
+  set background=dark
+  colorscheme PaperColor
+endif
+
+"" Terraform plugin
+let g:terraform_fmt_on_save = 1

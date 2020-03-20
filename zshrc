@@ -1,3 +1,9 @@
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/yurii.rochniak/.oh-my-zsh
 export ZPLUG_HOME=/usr/local/opt/zplug
@@ -7,7 +13,7 @@ source $ZPLUG_HOME/init.zsh
 # Look in ~/.oh-my-zsh/themes/
 # Optionally, if you set this to "random", it'll load a random theme each
 # time that oh-my-zsh is loaded.
-ZSH_THEME="robbyrussell"
+#ZSH_THEME="robbyrussell"
 
 # Uncomment the following line to use case-sensitive completion.
 # CASE_SENSITIVE="true"
@@ -52,6 +58,7 @@ ZSH_THEME="robbyrussell"
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
 zplug "popstas/zsh-command-time"
+export ZSH_COMMAND_TIME_MIN_SECONDS=15
 zplug "zpm-zsh/colorize"
 zplug "arzzen/calc.plugin.zsh"
 zplug "hlissner/zsh-autopair", defer:2
@@ -59,6 +66,7 @@ zplug "zpm-zsh/tmux"
 zplug "droctothorpe/kubecolor"
 zplug "ael-code/zsh-colored-man-pages"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "romkatv/powerlevel10k", as:theme, depth:1
 
 plugins=(git aws common-aliases encode64 gem pip python rsync sudo terraform vagrant brew docker fzf vault)
 
@@ -68,8 +76,8 @@ zplug load
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
 export PATH="/usr/local/sbin:$PATH"
 ## Python binaries
-export PATH="/Users/yurii.rochniak/Library/Python/2.7/bin:$PATH"
-export PATH="/Users/yurii.rochniak/Library/Python/3.7/bin:$PATH"
+export PATH="${HOME}/Library/Python/2.7/bin:$PATH"
+export PATH="${HOME}/Library/Python/3.7/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 source $ZSH/oh-my-zsh.sh
 
@@ -147,16 +155,28 @@ complete -o nospace -C /usr/local/Cellar/tfenv/1.0.1/bin/terraform terraform
 [[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-local ret_status="%(?:%{$fg_bold[green]%}>> :%{$fg_bold[red]%}>> %s)"
-PROMPT='${ret_status}%{$fg_bold[blue]%}%* %{$reset_color%}%{$fg_bold[green]%}%p%{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
+#local ret_status="%(?:%{$fg_bold[green]%}>> :%{$fg_bold[red]%}>> %s)"
+#PROMPT='${ret_status}%{$fg_bold[blue]%}%* %{$reset_color%}%{$fg_bold[green]%}%p%{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
+
+#function preexec() {
+#  timer=${timer:-$SECONDS}
+#}
+#
+#function precmd() {
+#  if [ $timer ]; then
+#    timer_show=$(($SECONDS - $timer))
+#    export RPROMPT="%F{8}${timer_show}s < %D{%a %F %T} %{$reset_color%}"
+#    unset timer
+#  else
+#    export RPROMPT="%{%F{8}%}%D{%a %F %T} %{$reset_color%}"
+#  fi
+#}
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
 # thefuck
 eval $(thefuck --alias)
 fpath+=${ZDOTDIR:-~}/.zsh_functions
-
-alias vim="nvim" # coz I always mess up with it
 
 # Kube
 # source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
@@ -178,20 +198,7 @@ function kns {
 
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
 
-if [ $TERM == 'xterm-kitty' ] ; then
-    # Kitty
-    autoload -Uz compinit
-    compinit
-    # Completion for kitty
-    kitty + complete setup zsh | source /dev/stdin
-    alias kdiff="kitty +kitten diff"
-    # SSH fix for Kitty
-    alias ssh="kitty +kitten ssh"
-    # krew
-    export PATH="$PATH:$HOME/.krew/bin"
-fi
-
-export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="${HOME}/.yarn/bin:${HOME}/.config/yarn/global/node_modules/.bin:$PATH"
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Tfenv
@@ -203,3 +210,18 @@ function wifit () {
         sleep 1
         networksetup -setairportpower Wi-Fi on
 }
+
+# Kitty configuration
+if [[ ${TERM} == 'xterm-kitty' ]] ; then
+    # Kitty
+    autoload -Uz compinit
+    compinit
+    # Completion for kitty
+    kitty + complete setup zsh | source /dev/stdin
+    alias kdiff="kitty +kitten diff"
+    # SSH fix for Kitty
+    alias ssh="kitty +kitten ssh"
+fi
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

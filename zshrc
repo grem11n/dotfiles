@@ -68,7 +68,9 @@ zplug "ael-code/zsh-colored-man-pages"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "romkatv/powerlevel10k", as:theme, depth:1
 
-plugins=(git aws common-aliases encode64 gem pip python rsync sudo terraform vagrant brew docker fzf vault)
+export LS_COLORS='di=0;36:fi=0:ln=31:pi=5:so=5:bd=5:cd=5:or=31:mi=0:ex=0;32:*.rpm=0:*.tar=0;31'
+
+plugins=(git aws common-aliases encode64 gem pip python rsync terraform vagrant brew docker fzf vault)
 
 zplug load
 
@@ -76,8 +78,8 @@ zplug load
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
 export PATH="/usr/local/sbin:$PATH"
 ## Python binaries
-export PATH="${HOME}/Library/Python/2.7/bin:$PATH"
-export PATH="${HOME}/Library/Python/3.7/bin:$PATH"
+export PATH="$HOME/Library/Python/2.7/bin:$PATH"
+export PATH="$HOME/Library/Python/3.8/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 source $ZSH/oh-my-zsh.sh
 
@@ -124,11 +126,17 @@ alias sshq="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
 alias dev-env="source ~/.preply/dev.env"
 alias db-local="source ~/.preply/db_local.env"
 alias d="dirs -v"
+alias aws-login="bash $HOME/.aws-cli-auth.sh"
+alias gstart="git checkout master && git pull --rebase"
 
 #Golang
 export PATH=$PATH:/usr/local/go/bin
 export GOPATH=~/Golang
 export PATH="$GOPATH/bin:$PATH"
+go_test() {
+  go test $* | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/SKIP/s//$(printf "\033[34mSKIP\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/'' | GREP_COLOR="01;33" egrep --color=always '\s*[a-zA-Z0-9\-_.]+[:][0-9]+[:]|^'
+}
+
 # Rust
 export PATH=$PATH:~/.cargo/bin
 
@@ -141,11 +149,8 @@ function pubip {
   fi
 }
 
-# Tmux:
-alias tmux="TERM=screen-256color tmux"
-
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/Cellar/tfenv/1.0.1/bin/terraform terraform
+complete -o nospace -C /usr/local/Cellar/tfenv/1.0.2/bin/terraform terraform
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -155,7 +160,7 @@ complete -o nospace -C /usr/local/Cellar/tfenv/1.0.1/bin/terraform terraform
 [[ -f /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh ]] && . /usr/local/lib/node_modules/serverless/node_modules/tabtab/.completions/sls.zsh
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
-#local ret_status="%(?:%{$fg_bold[green]%}>> :%{$fg_bold[red]%}>> %s)"
+local ret_status="%(?:%{$fg_bold[green]%}>> :%{$fg_bold[red]%}>> %s)"
 #PROMPT='${ret_status}%{$fg_bold[blue]%}%* %{$reset_color%}%{$fg_bold[green]%}%p%{$fg[cyan]%}%c %{$fg_bold[blue]%}$(git_prompt_info)%{$reset_color%}'
 
 #function preexec() {
@@ -182,6 +187,7 @@ fpath+=${ZDOTDIR:-~}/.zsh_functions
 # source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 # PS1='$(kube_ps1)'$PS1
 alias kc="kubectl"
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Set k8s namespace
 function kns {
@@ -198,7 +204,7 @@ function kns {
 
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
 
-export PATH="${HOME}/.yarn/bin:${HOME}/.config/yarn/global/node_modules/.bin:$PATH"
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 # Tfenv
@@ -225,3 +231,6 @@ fi
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Fuzzy finder
+source $HOME/.config/fzfrc

@@ -22,8 +22,12 @@ call plug#begin()
 
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'tpope/vim-fugitive'
+Plug 'tpope/vim-rhubarb'
 Plug 'scrooloose/nerdtree'
 Plug 'Xuyuanp/nerdtree-git-plugin'
+" Test explorers
+Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+"
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 Plug 'jamessan/vim-gnupg'
 Plug 'majutsushi/tagbar'
@@ -39,7 +43,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'haya14busa/incsearch.vim'
 Plug 'martinda/Jenkinsfile-vim-syntax'
 Plug 'vim-voom/VOoM'
-" Plug 'Yggdroot/indentLine'
+Plug 'nathanaelkane/vim-indent-guides'
 Plug 'junegunn/fzf.vim'
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
@@ -58,7 +62,7 @@ Plug 'ryanoasis/vim-devicons'
 if has('nvim')
   Plug 'https://gitlab.com/Lenovsky/nuake.git'
 endif
-Plug 'neoclide/coc.nvim', {'do': { -> coc#util#install()}}
+Plug 'neoclide/coc.nvim', {'tag': '*', 'do': './install.sh'}
 " Plug 'numirias/semshi', {'do': ':UpdateRemotePlugins'} " Disabled because
 " causes issues
 Plug 'dyng/ctrlsf.vim'
@@ -68,7 +72,18 @@ Plug 'ekalinin/Dockerfile.vim'
 Plug 'stephpy/vim-yaml'
 Plug 'saltstack/salt-vim'
 Plug 'chrisbra/vim-diff-enhanced'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'francoiscabrol/ranger.vim'
+Plug 'rbgrouleff/bclose.vim'
+Plug 'junegunn/vim-peekaboo'
+Plug 'stsewd/fzf-checkout.vim'
 
+"" Text writing plugins
+Plug 'junegunn/goyo.vim'
+Plug 'junegunn/limelight.vim'
+Plug 'udalov/kotlin-vim'
+Plug 'andrewstuart/vim-kubernetes'
+Plug 'yaronkh/vim-winmanip'
 
 call plug#end()
 
@@ -83,6 +98,7 @@ endfun
 
 " Alias for NerdTree
 call SetupCommandAlias("nt","NERDTree")
+call SetupCommandAlias("ct","CHADopen")
 
 " Alias for JSON pretty print
 call SetupCommandAlias("ppj", "%!python -m json.tool")
@@ -157,13 +173,17 @@ let g:airline#extensions#tabline#fnamemod = ':t'
 
 "" NERD Tree
 autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
 autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
 let g:NERDTreeDirArrows = 1
 let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
+
+"" CHAD Tree
+autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | exe 'CHADopen' | endif
+let g:chadtree_settings = { 'follow': 'false', }
 
 "" Markdown preview
 let vim_markdown_preview_browser='Firefox'
@@ -225,16 +245,17 @@ inoremap <C-\> <C-\><C-n>:Nuake<CR>
 tnoremap <C-\> <C-\><C-n>:Nuake<CR>
 
 " indentLine
-let g:indentLine_char = '|'
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let g:indentLine_enabled = 1
 let g:indentLine_concealcursor = 'inc'
+let g:indentLine_setConceal = 0
 let g:indentLine_conceallevel = 0
+let g:indentLine_setColors = 0
 
-"Coc.nvim
+"coc.nvim
 let g:coc_global_extensions = [
         \ 'coc-dictionary',
         \ 'coc-word',
-        \ 'coc-gocode',
         \ 'coc-rls',
         \ 'coc-python',
         \ 'coc-highlight'
@@ -255,7 +276,7 @@ set signcolumn=yes
 " use <tab> for trigger completion and navigate to next complete item
 function! s:check_back_space() abort
   let col = col('.') - 1
-  return !col || getline('.')[col - 1]  =~ '\s'
+  return !col || getline('.')[col - 1]  =~# '\s'
 endfunction
 
 inoremap <silent><expr> <TAB>
@@ -264,6 +285,23 @@ inoremap <silent><expr> <TAB>
       \ coc#refresh()
 
 inoremap <expr> <cr> pumvisible() ? "\<C-y>" : "\<C-g>u\<CR>"
+
+" GoTo code navigation.
+nmap <silent> gd <Plug>(coc-definition)
+nmap <silent> gy <Plug>(coc-type-definition)
+nmap <silent> gi <Plug>(coc-implementation)
+nmap <silent> gr <Plug>(coc-references)
+
+" Use K to show documentation in preview window.
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+
+function! s:show_documentation()
+  if (index(['vim','help'], &filetype) >= 0)
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 
 " Test CrystalLine
 function! StatusLine(current, width)
@@ -340,3 +378,24 @@ endif
 
 "" Terraform plugin
 let g:terraform_fmt_on_save = 1
+
+" Search for selected text, forwards or backwards.
+vnoremap <silent> * :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+vnoremap <silent> # :<C-U>
+  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
+  \gvy?<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
+  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
+  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
+
+"" Terminal
+tnoremap <Esc> <C-\><C-n>
+
+let g:fzf_checkout_git_bin = 'git'
+
+" Goyo
+autocmd! User GoyoEnter Limelight
+autocmd! User GoyoLeave Limelight!

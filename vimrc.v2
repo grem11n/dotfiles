@@ -20,27 +20,56 @@ set shell=/usr/local/bin/zsh
 " Plug as a plugin managet
 call plug#begin()
 
+" Color theme
 Plug 'NLKNguyen/papercolor-theme'
+
+" General purpose
+Plug 'jamessan/vim-gnupg'
+Plug 'xolox/vim-misc'
+Plug 'xolox/vim-easytags'
+Plug 'vim-voom/VOoM'
+Plug 'junegunn/fzf.vim'
+Plug 'ryanoasis/vim-devicons'
+if has('nvim')
+  Plug 'https://gitlab.com/Lenovsky/nuake.git'
+endif
+Plug 'dyng/ctrlsf.vim'
+Plug 'itchyny/lightline.vim'
+Plug 'francoiscabrol/ranger.vim'
+Plug 'junegunn/vim-peekaboo'
+Plug 'yaronkh/vim-winmanip'
+Plug 'jremmen/vim-ripgrep'
+
+" Git integration
 Plug 'tpope/vim-fugitive'
 Plug 'tpope/vim-rhubarb'
+Plug 'stsewd/fzf-checkout.vim'
+Plug 'airblade/vim-gitgutter'
+Plug 'rhysd/git-messenger.vim'
+
+" Directory tree
 if has('nvim')
   Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
 else
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
 endif
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'jamessan/vim-gnupg'
+
+" General programming
 Plug 'majutsushi/tagbar'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
-Plug 'hashivim/vim-terraform'
 Plug 'Konfekt/FastFold'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'airblade/vim-gitgutter'
+" Plug 'w0rp/ale'
+
+" Languages & LSP
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'hashivim/vim-terraform'
 Plug 'martinda/Jenkinsfile-vim-syntax'
-Plug 'vim-voom/VOoM'
-Plug 'junegunn/fzf.vim'
+Plug 'stephpy/vim-yaml'
+Plug 'saltstack/salt-vim'
+Plug 'norcalli/nvim-colorizer.lua'
+Plug 'andrewstuart/vim-kubernetes'
+
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
     if has('nvim')
@@ -50,35 +79,17 @@ function! BuildComposer(info)
     endif
   endif
 endfunction
-
 Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
-" Plug 'w0rp/ale'
-Plug 'ryanoasis/vim-devicons'
-if has('nvim')
-  Plug 'https://gitlab.com/Lenovsky/nuake.git'
-endif
-Plug 'dyng/ctrlsf.vim'
-Plug 'rhysd/git-messenger.vim'
-Plug 'rbong/vim-crystalline'
 Plug 'ekalinin/Dockerfile.vim'
-Plug 'stephpy/vim-yaml'
-Plug 'saltstack/salt-vim'
-Plug 'norcalli/nvim-colorizer.lua'
-Plug 'francoiscabrol/ranger.vim'
-Plug 'junegunn/vim-peekaboo'
-Plug 'stsewd/fzf-checkout.vim'
+
+"" LSP support
+Plug 'neovim/nvim-lspconfig'
+Plug 'nvim-lua/completion-nvim'
+Plug 'nvim-lua/diagnostic-nvim'
 
 "" Text writing plugins
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
-
-Plug 'andrewstuart/vim-kubernetes'
-Plug 'yaronkh/vim-winmanip'
-
-" Test LSP support
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
-Plug 'nvim-lua/diagnostic-nvim'
 
 call plug#end()
 
@@ -136,12 +147,12 @@ set laststatus=2
 set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
 autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
 
-set hlsearch
-nnoremap <CR> :nohlsearch<CR><CR>
-
 " Find and highlight trailing whitespaces
 :highlight ExtraWhitespace ctermbg=red guibg=red
 :match ExtraWhitespace /\s\+$/
+
+set hlsearch
+nnoremap <CR> :nohlsearch<CR><CR>
 
 "" NERD Tree
 autocmd StdinReadPre * let s:std_in=1
@@ -208,47 +219,21 @@ nnoremap <C-\> :Nuake<CR>
 inoremap <C-\> <C-\><C-n>:Nuake<CR>
 tnoremap <C-\> <C-\><C-n>:Nuake<CR>
 
-" Test CrystalLine
-function! StatusLine(current, width)
-  let l:s = ''
-
-  if a:current
-    let l:s .= crystalline#mode() . crystalline#right_mode_sep('')
-  else
-    let l:s .= '%#CrystallineInactive#'
-  endif
-  let l:s .= ' %f%h%w%m%r '
-  if a:current
-    let l:s .= crystalline#right_sep('', 'Fill') . ' %{fugitive#head()}'
-  endif
-
-  let l:s .= '%='
-  if a:current
-    let l:s .= crystalline#left_sep('', 'Fill') . ' %{&paste ?"PASTE ":""}%{&spell?"SPELL ":""}'
-    let l:s .= crystalline#left_mode_sep('')
-  endif
-  if a:width > 80
-    let l:s .= ' %{&ft}[%{&enc}][%{&ffs}] %l/%L %c%V %P '
-  else
-    let l:s .= ' '
-  endif
-
-  return l:s
+" Test lightline
+let g:lightline = {
+      \ 'colorscheme': 'PaperColor',
+      \ 'active': {
+           \   'left': [ [ 'mode', 'paste' ],
+           \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+           \ },
+           \ 'component_function': {
+           \   'gitbranch': 'FugitiveHead',
+           \   'readonly': 'LightlineReadonly',
+           \ },
+      \ }
+function! LightlineReadonly()
+  return &readonly && &filetype !=# 'help' ? 'RO' : ''
 endfunction
-
-function! TabLine()
-  let l:vimlabel = has('nvim') ?  ' NVIM ' : ' VIM '
-  return crystalline#bufferline(2, len(l:vimlabel), 1) . '%=%#CrystallineTab# ' . l:vimlabel
-endfunction
-
-let g:crystalline_enable_sep = 1
-let g:crystalline_statusline_fn = 'StatusLine'
-let g:crystalline_tabline_fn = 'TabLine'
-let g:crystalline_theme = 'papercolor'
-
-set showtabline=2
-set guioptions-=e
-set laststatus=2
 
 "" Vagrantfile
 augroup vagrant

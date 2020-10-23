@@ -19,7 +19,6 @@ set shell=/usr/local/bin/zsh
 
 " Plug as a plugin managet
 call plug#begin()
-
 " Color theme
 Plug 'NLKNguyen/papercolor-theme'
 
@@ -35,10 +34,11 @@ if has('nvim')
 endif
 Plug 'dyng/ctrlsf.vim'
 Plug 'itchyny/lightline.vim'
+Plug 'pacha/vem-tabline'
 Plug 'francoiscabrol/ranger.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'yaronkh/vim-winmanip'
-Plug 'jremmen/vim-ripgrep'
+"Plug 'jremmen/vim-ripgrep'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -59,7 +59,10 @@ endif
 Plug 'majutsushi/tagbar'
 Plug 'Konfekt/FastFold'
 Plug 'editorconfig/editorconfig-vim'
+Plug 'steelsojka/completion-buffers'
 " Plug 'w0rp/ale'
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall python go bash typescript javascript yaml jsom toml regex'}
+Plug 'nvim-treesitter/completion-treesitter'
 
 " Languages & LSP
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -86,6 +89,8 @@ Plug 'ekalinin/Dockerfile.vim'
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/completion-nvim'
 Plug 'nvim-lua/diagnostic-nvim'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
 
 "" Text writing plugins
 Plug 'junegunn/goyo.vim'
@@ -221,16 +226,17 @@ tnoremap <C-\> <C-\><C-n>:Nuake<CR>
 
 " Test lightline
 let g:lightline = {
+      \   'enable': { 'statusline': 1, 'tabline': 0 },
       \ 'colorscheme': 'PaperColor',
       \ 'active': {
-           \   'left': [ [ 'mode', 'paste' ],
-           \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-           \ },
-           \ 'component_function': {
-           \   'gitbranch': 'FugitiveHead',
-           \   'readonly': 'LightlineReadonly',
-           \ },
-      \ }
+      \   'left': [ [ 'mode', 'paste' ],
+      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
+      \ },
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead',
+      \   'readonly': 'LightlineReadonly',
+      \ },
+    \ }
 function! LightlineReadonly()
   return &readonly && &filetype !=# 'help' ? 'RO' : ''
 endfunction
@@ -298,17 +304,32 @@ local on_attach_vim = function(client)
   require'diagnostic'.on_attach(client)
   nvim_command('autocmd CursorHold * lua vim.lsp.util.show_line_diagnostics()')
 end
+local nvim_lsp = require'nvim_lsp'
+local configs = require'nvim_lsp/configs'
+-- Groovy LSP is manual
+configs.groovy_lsp = {
+  default_config = {
+    cmd = {'java', '-jar', '/Users/yurii.rochniak/sandbox/groovy-language-server/build/libs/groovy-language-server-all.jar'};
+    filetypes = {'groovy'};
+    root_dir = function(fname)
+      return nvim_lsp.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+    end;
+    settings = {};
+  };
+}
+require'nvim_lsp'.groovy_lsp.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.gopls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.pyls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.yamlls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.dockerls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.bashls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.jsonls.setup{on_attach=on_attach_vim}
+require'nvim_lsp'.tsserver.setup{on_attach=on_attach_vim}
 
 EOF
 
 " Do not spawn too many instances of gopls
-let g:go_gopls_enabled = 0
+let g:go_gopls_enabled = 1
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -317,6 +338,13 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " Set completeopt to have a better completion experience
 set completeopt=menuone,noinsert,noselect
 
+let g:completion_chain_complete_list = [
+    \{'complete_items': ['lsp', 'buffers']},
+    \{'mode': '<c-p>'},
+    \{'mode': '<c-n>'}
+\]
+let g:completion_auto_change_source = 1
+
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
@@ -324,3 +352,5 @@ let g:diagnostic_enable_virtual_text = 0
 let g:diagnostic_enable_underline = 0
 let g:diagnostic_auto_popup_while_jump = 1
 let g:diagnostic_insert_delay = 0
+
+let g:vem_tabline_show = 2

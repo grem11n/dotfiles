@@ -21,6 +21,8 @@ set shell=/usr/local/bin/zsh
 call plug#begin()
 " Color theme
 Plug 'NLKNguyen/papercolor-theme'
+Plug 'christianchiarulli/nvcode-color-schemes.vim'
+Plug 'glepnir/zephyr-nvim'
 
 " General purpose
 Plug 'jamessan/vim-gnupg'
@@ -39,6 +41,7 @@ Plug 'francoiscabrol/ranger.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'yaronkh/vim-winmanip'
 "Plug 'jremmen/vim-ripgrep'
+Plug 'Yggdroot/indentLine'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -61,8 +64,9 @@ Plug 'Konfekt/FastFold'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'steelsojka/completion-buffers'
 " Plug 'w0rp/ale'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall python go bash typescript javascript yaml jsom toml regex'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall python go bash typescript javascript yaml json toml regex lua'}
 Plug 'nvim-treesitter/completion-treesitter'
+Plug 'lukas-reineke/format.nvim'
 
 " Languages & LSP
 Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
@@ -72,6 +76,7 @@ Plug 'stephpy/vim-yaml'
 Plug 'saltstack/salt-vim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'andrewstuart/vim-kubernetes'
+Plug 'Glench/Vim-Jinja2-Syntax'
 
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
@@ -122,10 +127,21 @@ map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 
 "" Theme config
-syntax enable
+" checks if your terminal has 24-bit color support
+if (has("termguicolors"))
+    set termguicolors
+    hi LineNr ctermbg=NONE guibg=NONE
+endif
+
+let g:nvcode_termcolors=256
+syntax on
+"syntax enable
+colorscheme nvcode " Or whatever colorscheme you make
+"colorscheme PaperColor
+"colorscheme zephyr
+
 set number
 set background=dark
-colorscheme PaperColor
 " Fix for Vimr
 if match(expand('$VIM'), 'VimR.app') > -1
     " set true color
@@ -227,7 +243,7 @@ tnoremap <C-\> <C-\><C-n>:Nuake<CR>
 " Test lightline
 let g:lightline = {
       \   'enable': { 'statusline': 1, 'tabline': 0 },
-      \ 'colorscheme': 'PaperColor',
+      \ 'colorscheme': 'one',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
       \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
@@ -296,8 +312,11 @@ let g:fzf_checkout_git_bin = 'git'
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 
+" Lua
 " LSP
+" Treesitter
 lua <<EOF
+
 local nvim_command = vim.api.nvim_command
 local on_attach_vim = function(client)
   require'completion'.on_attach(client)
@@ -325,6 +344,52 @@ require'nvim_lsp'.dockerls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.bashls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.jsonls.setup{on_attach=on_attach_vim}
 require'nvim_lsp'.tsserver.setup{on_attach=on_attach_vim}
+
+require'nvim-treesitter.configs'.setup {
+  ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  highlight = {
+    enable = true,              -- false will disable the whole extension
+    disable = { "c", "rust" },  -- list of language that will be disabled
+  },
+}
+
+require "format".setup {
+    ["*"] = {
+        {cmd = {"sed -i 's/[ \t]*$//'"}} -- remove trailing whitespace
+    },
+    vim = {
+        {
+            cmd = {"luafmt -w replace"},
+            start_pattern = "^lua << EOF$",
+            end_pattern = "^EOF$"
+        }
+    },
+    vimwiki = {
+        {
+            cmd = {"prettier -w --parser babel"},
+            start_pattern = "^{{{javascript$",
+            end_pattern = "^}}}$"
+        }
+    },
+    lua = {
+        {
+            cmd = {
+                function(file)
+                    return string.format("luafmt -l %s -w replace %s", vim.bo.textwidth, file)
+                end
+            }
+        }
+    },
+    markdown = {
+        {cmd = {"prettier -w"}},
+        {
+            cmd = {"black"},
+            start_pattern = "^```python$",
+            end_pattern = "^```$",
+            target = "current"
+        }
+    }
+}
 
 EOF
 
@@ -354,3 +419,11 @@ let g:diagnostic_auto_popup_while_jump = 1
 let g:diagnostic_insert_delay = 0
 
 let g:vem_tabline_show = 2
+
+augroup Format
+    autocmd!
+    autocmd BufWritePost * FormatWrite
+augroup END
+
+let g:indentLine_enabled = 0
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']

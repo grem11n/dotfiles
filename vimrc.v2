@@ -22,7 +22,6 @@ call plug#begin()
 " Color theme
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
-Plug 'glepnir/zephyr-nvim'
 
 " General purpose
 Plug 'jamessan/vim-gnupg'
@@ -36,12 +35,12 @@ if has('nvim')
 endif
 Plug 'dyng/ctrlsf.vim'
 Plug 'itchyny/lightline.vim'
-Plug 'pacha/vem-tabline'
 Plug 'francoiscabrol/ranger.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'yaronkh/vim-winmanip'
-"Plug 'jremmen/vim-ripgrep'
 Plug 'Yggdroot/indentLine'
+Plug 'kyazdani42/nvim-web-devicons'
+Plug 'romgrk/barbar.nvim'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -63,7 +62,6 @@ Plug 'majutsushi/tagbar'
 Plug 'Konfekt/FastFold'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'steelsojka/completion-buffers'
-" Plug 'w0rp/ale'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall python go bash typescript javascript yaml json toml regex lua'}
 Plug 'nvim-treesitter/completion-treesitter'
 Plug 'lukas-reineke/format.nvim'
@@ -93,7 +91,6 @@ Plug 'ekalinin/Dockerfile.vim'
 "" LSP support
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/completion-nvim'
-Plug 'nvim-lua/diagnostic-nvim'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
 
@@ -318,32 +315,43 @@ autocmd! User GoyoLeave Limelight!
 lua <<EOF
 
 local nvim_command = vim.api.nvim_command
+
 local on_attach_vim = function(client)
   require'completion'.on_attach(client)
-  require'diagnostic'.on_attach(client)
-  nvim_command('autocmd CursorHold * lua vim.lsp.util.show_line_diagnostics()')
+  nvim_command('autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()')
 end
-local nvim_lsp = require'nvim_lsp'
-local configs = require'nvim_lsp/configs'
+
+local lspconfig = require'lspconfig'
+local configs = require'lspconfig/configs'
+
+-- Setup diagnostics
+vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+  vim.lsp.diagnostic.on_publish_diagnostics, {
+    virtual_text = false,
+    underline = false,
+    signs = true,
+    update_in_insert = true,
+  }
+)
 -- Groovy LSP is manual
 configs.groovy_lsp = {
   default_config = {
     cmd = {'java', '-jar', '/Users/yurii.rochniak/sandbox/groovy-language-server/build/libs/groovy-language-server-all.jar'};
     filetypes = {'groovy'};
     root_dir = function(fname)
-      return nvim_lsp.util.find_git_ancestor(fname) or vim.loop.os_homedir()
+      return lspconfig.util.find_git_ancestor(fname) or vim.loop.os_homedir()
     end;
     settings = {};
   };
 }
-require'nvim_lsp'.groovy_lsp.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.gopls.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.pyls.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.yamlls.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.dockerls.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.bashls.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.jsonls.setup{on_attach=on_attach_vim}
-require'nvim_lsp'.tsserver.setup{on_attach=on_attach_vim}
+require'lspconfig'.groovy_lsp.setup{on_attach=on_attach_vim}
+require'lspconfig'.gopls.setup{on_attach=on_attach_vim}
+require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+require'lspconfig'.yamlls.setup{on_attach=on_attach_vim}
+require'lspconfig'.dockerls.setup{on_attach=on_attach_vim}
+require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
+require'lspconfig'.jsonls.setup{on_attach=on_attach_vim}
+require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
@@ -390,8 +398,17 @@ require "format".setup {
         }
     }
 }
-
 EOF
+
+nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+"nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
 
 " Do not spawn too many instances of gopls
 let g:go_gopls_enabled = 1
@@ -413,13 +430,6 @@ let g:completion_auto_change_source = 1
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
-let g:diagnostic_enable_virtual_text = 0
-let g:diagnostic_enable_underline = 0
-let g:diagnostic_auto_popup_while_jump = 1
-let g:diagnostic_insert_delay = 0
-
-let g:vem_tabline_show = 2
-
 augroup Format
     autocmd!
     autocmd BufWritePost * FormatWrite
@@ -427,3 +437,8 @@ augroup END
 
 let g:indentLine_enabled = 0
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+" barbar.nvim
+let bufferline = {}
+let bufferline.closable = v:false
+let bufferline.clickable = v:false

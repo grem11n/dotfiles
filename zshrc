@@ -78,8 +78,8 @@ zplug load
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
 export PATH="/usr/local/sbin:$PATH"
 ## Python binaries
-export PATH="$HOME/Library/Python/2.7/bin:$PATH"
-export PATH="$HOME/Library/Python/3.8/bin:$PATH"
+export PATH="/Users/yurii.rochniak/Library/Python/2.7/bin:$PATH"
+export PATH="/Users/yurii.rochniak/Library/Python/3.8/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 source $ZSH/oh-my-zsh.sh
 
@@ -234,3 +234,18 @@ fi
 
 # Fuzzy finder
 source $HOME/.config/fzfrc
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+
+# Perl
+PATH="/Users/yurii.rochniak/perl5/bin${PATH:+:${PATH}}"; export PATH;
+PERL5LIB="/Users/yurii.rochniak/perl5/lib/perl5${PERL5LIB:+:${PERL5LIB}}"; export PERL5LIB;
+PERL_LOCAL_LIB_ROOT="/Users/yurii.rochniak/perl5${PERL_LOCAL_LIB_ROOT:+:${PERL_LOCAL_LIB_ROOT}}"; export PERL_LOCAL_LIB_ROOT;
+PERL_MB_OPT="--install_base \"/Users/yurii.rochniak/perl5\""; export PERL_MB_OPT;
+PERL_MM_OPT="INSTALL_BASE=/Users/yurii.rochniak/perl5"; export PERL_MM_OPT;
+
+# Ruby
+export PATH="/usr/local/lib/ruby/gems/3.0.0/bin:$PATH"
+export PATH="/usr/local/opt/ruby/bin:$PATH"

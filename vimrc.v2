@@ -41,6 +41,7 @@ Plug 'yaronkh/vim-winmanip'
 Plug 'Yggdroot/indentLine'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
+Plug 'mhinz/vim-startify'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -51,7 +52,7 @@ Plug 'rhysd/git-messenger.vim'
 
 " Directory tree
 if has('nvim')
-  Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': ':UpdateRemotePlugins'}
+  Plug 'ms-jpq/chadtree', {'commit': '6fef12534af60cf43e8ce782db84a573eb643295', 'do': ':UpdateRemotePlugins'}
 else
   Plug 'scrooloose/nerdtree'
   Plug 'Xuyuanp/nerdtree-git-plugin'
@@ -183,7 +184,7 @@ let g:NERDTreeDirArrowExpandable = '▸'
 let g:NERDTreeDirArrowCollapsible = '▾'
 
 "" CHAD Tree
-autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | exe 'CHADopen' | endif
+"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | exe 'CHADopen' | endif
 let g:chadtree_settings = { 'follow': 'false', }
 
 "" Fugitive-vim config
@@ -430,10 +431,10 @@ let g:completion_auto_change_source = 1
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
-augroup Format
-    autocmd!
-    autocmd BufWritePost * FormatWrite
-augroup END
+"augroup Format
+"    autocmd!
+"    autocmd BufWritePost * FormatWrite
+"augroup END
 
 let g:indentLine_enabled = 0
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']

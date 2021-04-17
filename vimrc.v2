@@ -22,7 +22,6 @@ call plug#begin()
 " Color theme
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'christianchiarulli/nvcode-color-schemes.vim'
-
 " General purpose
 Plug 'jamessan/vim-gnupg'
 Plug 'xolox/vim-misc'
@@ -34,7 +33,7 @@ if has('nvim')
   Plug 'https://gitlab.com/Lenovsky/nuake.git'
 endif
 Plug 'dyng/ctrlsf.vim'
-Plug 'itchyny/lightline.vim'
+Plug 'hoob3rt/lualine.nvim'
 Plug 'francoiscabrol/ranger.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'yaronkh/vim-winmanip'
@@ -42,6 +41,7 @@ Plug 'Yggdroot/indentLine'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
 Plug 'mhinz/vim-startify'
+Plug 'AndrewRadev/splitjoin.vim'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -51,12 +51,7 @@ Plug 'airblade/vim-gitgutter'
 Plug 'rhysd/git-messenger.vim'
 
 " Directory tree
-if has('nvim')
-  Plug 'ms-jpq/chadtree', {'commit': '6fef12534af60cf43e8ce782db84a573eb643295', 'do': ':UpdateRemotePlugins'}
-else
-  Plug 'scrooloose/nerdtree'
-  Plug 'Xuyuanp/nerdtree-git-plugin'
-endif
+Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
 
 " General programming
 Plug 'majutsushi/tagbar'
@@ -94,6 +89,10 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/completion-nvim'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
+" test
+Plug 'glepnir/lspsaga.nvim'
+Plug 'ojroques/nvim-lspfuzzy'
+Plug 'ray-x/lsp_signature.nvim'
 
 "" Text writing plugins
 Plug 'junegunn/goyo.vim'
@@ -133,10 +132,8 @@ endif
 
 let g:nvcode_termcolors=256
 syntax on
-"syntax enable
-colorscheme nvcode " Or whatever colorscheme you make
-"colorscheme PaperColor
-"colorscheme zephyr
+colorscheme PaperColor
+"colorscheme nvcode
 
 set number
 set background=dark
@@ -146,19 +143,19 @@ if match(expand('$VIM'), 'VimR.app') > -1
     set termguicolors
 endif
 
-let g:PaperColor_Theme_Options = {
-  \   'language': {
-  \     'python': {
-  \       'highlight_builtins' : 1
-  \     },
-  \     'cpp': {
-  \       'highlight_standard_library': 1
-  \     },
-  \     'c': {
-  \       'highlight_builtins' : 1
-  \     }
-  \   }
-  \ }
+"let g:PaperColor_Theme_Options = {
+"  \   'language': {
+"  \     'python': {
+"  \       'highlight_builtins' : 1
+"  \     },
+"  \     'cpp': {
+"  \       'highlight_standard_library': 1
+"  \     },
+"  \     'c': {
+"  \       'highlight_builtins' : 1
+"  \     }
+"  \   }
+"  \ }
 
 set wildmenu
 set wildmode=list:longest
@@ -167,25 +164,26 @@ set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
 autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
 
 " Find and highlight trailing whitespaces
-:highlight ExtraWhitespace ctermbg=red guibg=red
 :match ExtraWhitespace /\s\+$/
+:highlight ExtraWhitespace ctermbg=red guibg=red
 
 set hlsearch
 nnoremap <CR> :nohlsearch<CR><CR>
 
-"" NERD Tree
-autocmd StdinReadPre * let s:std_in=1
-"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd StdinReadPre * let s:std_in=1
-autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-let g:NERDTreeDirArrows = 1
-let g:NERDTreeDirArrowExpandable = '▸'
-let g:NERDTreeDirArrowCollapsible = '▾'
+""" NERD Tree
+"autocmd StdinReadPre * let s:std_in=1
+""autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
+"autocmd StdinReadPre * let s:std_in=1
+"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
+"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+"let g:NERDTreeDirArrows = 1
+"let g:NERDTreeDirArrowExpandable = '▸'
+"let g:NERDTreeDirArrowCollapsible = '▾'
+"let g:NERDTreeIgnore = ['^node_modules$', '^vendor$']
 
 "" CHAD Tree
 "autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | exe 'CHADopen' | endif
-let g:chadtree_settings = { 'follow': 'false', }
+let g:chadtree_settings = { "options.follow": v:false }
 
 "" Fugitive-vim config
 let g:EditorConfig_exclude_patterns = ['scp://.*']
@@ -214,13 +212,13 @@ let g:ale_list_window_size = 5
 let g:ale_keep_list_window_open = 0
 let g:ale_lint_on_save = 1
 autocmd QuitPre * if empty(&bt) | lclose | endif
-let g:ale_linters = {
-  \ 'python': [
-  \   'flake8',
-  \   'pylint'],
-  \ 'go': [
-  \    'gopls']
-  \}
+"let g:ale_linters = {
+"  \ 'python': [
+"  \   'flake8',
+"  \   'pylint'],
+"  \ 'go': [
+"  \    'gopls']
+"  \}
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
@@ -346,19 +344,25 @@ configs.groovy_lsp = {
   };
 }
 require'lspconfig'.groovy_lsp.setup{on_attach=on_attach_vim}
-require'lspconfig'.gopls.setup{on_attach=on_attach_vim}
-require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+require'lspconfig'.gopls.setup{
+  on_attach=on_attach_vim,
+  cmd = { "gopls", "-remote=auto" }
+}
+--- require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
 require'lspconfig'.yamlls.setup{on_attach=on_attach_vim}
 require'lspconfig'.dockerls.setup{on_attach=on_attach_vim}
 require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
 require'lspconfig'.jsonls.setup{on_attach=on_attach_vim}
 require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
+require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
+
+require('lspfuzzy').setup {}
+require'lsp_signature'.on_attach()
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
   highlight = {
-    enable = true,              -- false will disable the whole extension
-    disable = { "c", "rust" },  -- list of language that will be disabled
+    enable = true,
   },
 }
 
@@ -399,6 +403,9 @@ require "format".setup {
         }
     }
 }
+
+local saga = require 'lspsaga'
+saga.init_lsp_saga()
 EOF
 
 nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
@@ -413,6 +420,7 @@ nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
 
 " Do not spawn too many instances of gopls
 let g:go_gopls_enabled = 1
+let g:go_gopls_options = ['-remote=auto']
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -443,3 +451,31 @@ let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 let bufferline = {}
 let bufferline.closable = v:false
 let bufferline.clickable = v:false
+
+" lualine
+let g:lualine = {
+    \'options' : {
+    \  'theme' : 'papercolor_dark',
+    \  'section_separators' : ['', ''],
+    \  'component_separators' : ['|', '|'],
+    \  'icons_enabled' : v:true,
+    \},
+    \'sections' : {
+    \  'lualine_a' : [ ['mode', {'upper': v:true,},], ],
+    \  'lualine_b' : [ ['branch', {'icon': '',}, ], ],
+    \  'lualine_c' : [ ['filename', {'file_status': v:true,},], ],
+    \  'lualine_x' : [ 'encoding', 'fileformat', 'filetype' ],
+    \  'lualine_y' : [ 'progress' ],
+    \  'lualine_z' : [ 'location'  ],
+    \},
+    \'inactive_sections' : {
+    \  'lualine_a' : [  ],
+    \  'lualine_b' : [  ],
+    \  'lualine_c' : [ 'filename' ],
+    \  'lualine_x' : [ 'location' ],
+    \  'lualine_y' : [  ],
+    \  'lualine_z' : [  ],
+    \},
+    \'extensions' : [ 'fzf' ],
+    \}
+lua require("lualine").setup()

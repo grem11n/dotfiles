@@ -21,7 +21,9 @@ set shell=/usr/local/bin/zsh
 call plug#begin()
 " Color theme
 Plug 'NLKNguyen/papercolor-theme'
-Plug 'christianchiarulli/nvcode-color-schemes.vim'
+Plug 'marko-cerovac/material.nvim'
+Plug 'rafamadriz/neon'
+
 " General purpose
 Plug 'jamessan/vim-gnupg'
 Plug 'xolox/vim-misc'
@@ -29,9 +31,7 @@ Plug 'xolox/vim-easytags'
 Plug 'vim-voom/VOoM'
 Plug 'junegunn/fzf.vim'
 Plug 'ryanoasis/vim-devicons'
-if has('nvim')
-  Plug 'https://gitlab.com/Lenovsky/nuake.git'
-endif
+Plug 'Lenovsky/nuake'
 Plug 'dyng/ctrlsf.vim'
 Plug 'hoob3rt/lualine.nvim'
 Plug 'francoiscabrol/ranger.vim'
@@ -40,8 +40,9 @@ Plug 'yaronkh/vim-winmanip'
 Plug 'Yggdroot/indentLine'
 Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
-Plug 'mhinz/vim-startify'
 Plug 'AndrewRadev/splitjoin.vim'
+Plug 'glepnir/dashboard-nvim'
+Plug 'tpope/vim-abolish'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -51,14 +52,14 @@ Plug 'airblade/vim-gitgutter'
 Plug 'rhysd/git-messenger.vim'
 
 " Directory tree
-Plug 'ms-jpq/chadtree', {'branch': 'chad', 'do': 'python3 -m chadtree deps'}
+Plug 'kyazdani42/nvim-tree.lua'
 
 " General programming
 Plug 'majutsushi/tagbar'
 Plug 'Konfekt/FastFold'
 Plug 'editorconfig/editorconfig-vim'
 Plug 'steelsojka/completion-buffers'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall python go bash typescript javascript yaml json toml regex lua'}
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall all'}
 Plug 'nvim-treesitter/completion-treesitter'
 Plug 'lukas-reineke/format.nvim'
 
@@ -71,6 +72,9 @@ Plug 'saltstack/salt-vim'
 Plug 'norcalli/nvim-colorizer.lua'
 Plug 'andrewstuart/vim-kubernetes'
 Plug 'Glench/Vim-Jinja2-Syntax'
+Plug 'cespare/vim-toml'
+Plug 'folke/lsp-trouble.nvim'
+Plug 'ray-x/lsp_signature.nvim'
 
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
@@ -89,14 +93,15 @@ Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/completion-nvim'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
-" test
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ojroques/nvim-lspfuzzy'
-Plug 'ray-x/lsp_signature.nvim'
 
 "" Text writing plugins
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+
+"" Experimental
+Plug 'weilbith/nvim-lsp-smag'
 
 call plug#end()
 
@@ -110,8 +115,7 @@ fun! SetupCommandAlias(from, to)
 endfun
 
 " Alias for NerdTree
-call SetupCommandAlias("nt","NERDTree")
-call SetupCommandAlias("ct","CHADopen")
+call SetupCommandAlias("nt","NvimTreeToggle")
 
 " Alias for JSON pretty print
 call SetupCommandAlias("ppj", "%!python -m json.tool")
@@ -132,8 +136,16 @@ endif
 
 let g:nvcode_termcolors=256
 syntax on
-colorscheme PaperColor
-"colorscheme nvcode
+"colorscheme PaperColor
+"colorscheme material
+let g:neon_style = "doom"
+let g:neon_italic_keyword = "true"
+let g:neon_italic_function = "true"
+colorscheme neon
+
+let g:material_style = 'oceanic'
+let g:material_flat_ui=0
+let g:material_italic_comments=1
 
 set number
 set background=dark
@@ -164,26 +176,11 @@ set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
 autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
 
 " Find and highlight trailing whitespaces
-:match ExtraWhitespace /\s\+$/
 :highlight ExtraWhitespace ctermbg=red guibg=red
+:match ExtraWhitespace /\s\+$/
 
 set hlsearch
 nnoremap <CR> :nohlsearch<CR><CR>
-
-""" NERD Tree
-"autocmd StdinReadPre * let s:std_in=1
-""autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-"autocmd StdinReadPre * let s:std_in=1
-"autocmd VimEnter * if argc() == 1 && isdirectory(argv()[0]) && !exists("s:std_in") | exe 'NERDTree' argv()[0] | wincmd p | ene | endif
-"autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
-"let g:NERDTreeDirArrows = 1
-"let g:NERDTreeDirArrowExpandable = '▸'
-"let g:NERDTreeDirArrowCollapsible = '▾'
-"let g:NERDTreeIgnore = ['^node_modules$', '^vendor$']
-
-"" CHAD Tree
-"autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | exe 'CHADopen' | endif
-let g:chadtree_settings = { "options.follow": v:false }
 
 "" Fugitive-vim config
 let g:EditorConfig_exclude_patterns = ['scp://.*']
@@ -200,25 +197,8 @@ let g:go_highlight_build_constraints = 1
 au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 
 "" FZF
-let g:fzf_command_prefix = 'Fzf'
-nnoremap <C-p> :FzfFiles<CR>
-
-"" Ale
-let g:airline#extensions#ale#enabled = 1
-let g:ale_lint_on_text_changed = 'never'
-let g:ale_lint_on_enter = 1
-let g:ale_open_list = 1
-let g:ale_list_window_size = 5
-let g:ale_keep_list_window_open = 0
-let g:ale_lint_on_save = 1
-autocmd QuitPre * if empty(&bt) | lclose | endif
-"let g:ale_linters = {
-"  \ 'python': [
-"  \   'flake8',
-"  \   'pylint'],
-"  \ 'go': [
-"  \    'gopls']
-"  \}
+let g:fzf_command_prefix = ''
+nnoremap <C-p> :Files<CR>
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
@@ -235,23 +215,6 @@ let g:nuake_size = 0.3
 nnoremap <C-\> :Nuake<CR>
 inoremap <C-\> <C-\><C-n>:Nuake<CR>
 tnoremap <C-\> <C-\><C-n>:Nuake<CR>
-
-" Test lightline
-let g:lightline = {
-      \   'enable': { 'statusline': 1, 'tabline': 0 },
-      \ 'colorscheme': 'one',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'gitbranch', 'readonly', 'filename', 'modified' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'FugitiveHead',
-      \   'readonly': 'LightlineReadonly',
-      \ },
-    \ }
-function! LightlineReadonly()
-  return &readonly && &filetype !=# 'help' ? 'RO' : ''
-endfunction
 
 "" Vagrantfile
 augroup vagrant
@@ -277,13 +240,6 @@ function! HighlightCursorWord()
     endif
 endfunction
 
-"" VimR colorscheme set 
-if has("gui_vimr")
-  set termguicolors
-  set background=dark
-  colorscheme PaperColor
-endif
-
 "" Terraform plugin
 let g:terraform_fmt_on_save = 1
 
@@ -308,11 +264,67 @@ let g:fzf_checkout_git_bin = 'git'
 autocmd! User GoyoEnter Limelight
 autocmd! User GoyoLeave Limelight!
 
-" Lua
-" LSP
-" Treesitter
-lua <<EOF
+nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
+nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
+nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
+"nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
+nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
+nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
+nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
+nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
+nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
 
+" Do not spawn too many instances of gopls
+let g:go_gopls_enabled = 1
+let g:go_gopls_options = ['-remote=auto']
+
+" Use <Tab> and <S-Tab> to navigate through popup menu
+inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
+inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
+
+" Set completeopt to have a better completion experience
+set completeopt=menuone,noinsert,noselect
+
+let g:completion_chain_complete_list = [
+    \{'complete_items': ['lsp', 'buffers']},
+    \{'mode': '<c-p>'},
+    \{'mode': '<c-n>'}
+\]
+let g:completion_auto_change_source = 1
+
+" Avoid showing message extra message when using completion
+set shortmess+=c
+
+let g:indentLine_enabled = 0
+let g:indentLine_char_list = ['|', '¦', '┆', '┊']
+
+" barbar.nvim
+let bufferline = {}
+let bufferline.closable = v:false
+let bufferline.clickable = v:false
+
+let g:dashboard_default_executive ='fzf'
+let g:nvim_tree_follow = 1
+let g:nvim_tree_disable_netrw = 0
+let g:nvim_tree_auto_open = 1
+let g:nvim_tree_auto_close = 1
+let g:nvim_tree_auto_ignore_ft = [ 'startify', 'dashboard' ]
+let g:nvim_tree_disable_window_picker = 1
+
+" Workaround for gx issue:
+" https://github.com/vim/vim/issues/4738
+function! OpenURLUnderCursor()
+  let s:uri = expand('<cfile>')
+  echom "s:uri = " . s:uri
+  if s:uri != ''
+    silent exec "!open '".s:uri."'"
+    :redraw!
+  endif
+endfunction
+nnoremap gx :call OpenURLUnderCursor()<CR>
+
+" Lua block
+lua <<EOF
 local nvim_command = vim.api.nvim_command
 
 local on_attach_vim = function(client)
@@ -355,6 +367,9 @@ require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
 require'lspconfig'.jsonls.setup{on_attach=on_attach_vim}
 require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
 require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
+require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+require("trouble").setup {}
+
 
 require('lspfuzzy').setup {}
 require'lsp_signature'.on_attach()
@@ -406,76 +421,59 @@ require "format".setup {
 
 local saga = require 'lspsaga'
 saga.init_lsp_saga()
+
+require'lualine'.setup {
+  options = {
+    icons_enabled = true,
+    --theme = 'material',
+    theme = 'neon',
+    component_separators = {'|', '|'},
+    section_separators = {'', ''},
+    disabled_filetypes = {}
+  },
+  sections = {
+    lualine_a = {'mode'},
+    lualine_b = {'branch'},
+    lualine_c = {'filename'},
+    lualine_x = {'encoding', 'fileformat', 'filetype'},
+    lualine_y = {'progress'},
+    lualine_z = {'location'}
+  },
+  inactive_sections = {
+    lualine_a = {},
+    lualine_b = {},
+    lualine_c = {'filename'},
+    lualine_x = {'location'},
+    lualine_y = {},
+    lualine_z = {}
+  },
+  tabline = {},
+  extensions = {'fzf'}
+}
+
+local M = {}
+
+require'nvim-tree.events'.on_nvim_tree_ready(function ()
+  vim.g.nvim_tree_ready = 1
+end)
+
+function M.update_cwd()
+  if vim.g.nvim_tree_ready == 1 then
+    local view = require'nvim-tree.view'
+    local lib = require'nvim-tree.lib'
+    if view.win_open() then
+      lib.change_dir(vim.fn.getcwd())
+    end
+  end
+end
+
+vim.api.nvim_exec([[
+  augroup NvimTreeConfig
+    au!
+    au DirChanged * lua NvimTreeConfig.update_cwd()
+  augroup END
+  ]], false)
+
+_G.NvimTreeConfig = M
+return M
 EOF
-
-nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-"nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-
-" Do not spawn too many instances of gopls
-let g:go_gopls_enabled = 1
-let g:go_gopls_options = ['-remote=auto']
-
-" Use <Tab> and <S-Tab> to navigate through popup menu
-inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
-inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
-
-" Set completeopt to have a better completion experience
-set completeopt=menuone,noinsert,noselect
-
-let g:completion_chain_complete_list = [
-    \{'complete_items': ['lsp', 'buffers']},
-    \{'mode': '<c-p>'},
-    \{'mode': '<c-n>'}
-\]
-let g:completion_auto_change_source = 1
-
-" Avoid showing message extra message when using completion
-set shortmess+=c
-
-"augroup Format
-"    autocmd!
-"    autocmd BufWritePost * FormatWrite
-"augroup END
-
-let g:indentLine_enabled = 0
-let g:indentLine_char_list = ['|', '¦', '┆', '┊']
-
-" barbar.nvim
-let bufferline = {}
-let bufferline.closable = v:false
-let bufferline.clickable = v:false
-
-" lualine
-let g:lualine = {
-    \'options' : {
-    \  'theme' : 'papercolor_dark',
-    \  'section_separators' : ['', ''],
-    \  'component_separators' : ['|', '|'],
-    \  'icons_enabled' : v:true,
-    \},
-    \'sections' : {
-    \  'lualine_a' : [ ['mode', {'upper': v:true,},], ],
-    \  'lualine_b' : [ ['branch', {'icon': '',}, ], ],
-    \  'lualine_c' : [ ['filename', {'file_status': v:true,},], ],
-    \  'lualine_x' : [ 'encoding', 'fileformat', 'filetype' ],
-    \  'lualine_y' : [ 'progress' ],
-    \  'lualine_z' : [ 'location'  ],
-    \},
-    \'inactive_sections' : {
-    \  'lualine_a' : [  ],
-    \  'lualine_b' : [  ],
-    \  'lualine_c' : [ 'filename' ],
-    \  'lualine_x' : [ 'location' ],
-    \  'lualine_y' : [  ],
-    \  'lualine_z' : [  ],
-    \},
-    \'extensions' : [ 'fzf' ],
-    \}
-lua require("lualine").setup()

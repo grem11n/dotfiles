@@ -22,6 +22,7 @@ call plug#begin()
 " Color theme
 Plug 'NLKNguyen/papercolor-theme'
 Plug 'marko-cerovac/material.nvim'
+Plug 'tjdevries/colorbuddy.nvim'
 Plug 'rafamadriz/neon'
 
 " General purpose
@@ -137,11 +138,7 @@ endif
 let g:nvcode_termcolors=256
 syntax on
 "colorscheme PaperColor
-"colorscheme material
-let g:neon_style = "doom"
-let g:neon_italic_keyword = "true"
-let g:neon_italic_function = "true"
-colorscheme neon
+colorscheme material
 
 let g:material_style = 'oceanic'
 let g:material_flat_ui=0
@@ -188,7 +185,6 @@ let g:EditorConfig_exclude_patterns = ['scp://.*']
 "" Golang
 let $GOPATH = "/Users/yurii.rochniak/Golang"
 let g:go_fmt_command = "goimports"
-" let g:go_fmt_command = "gofmt"
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
@@ -329,7 +325,7 @@ local nvim_command = vim.api.nvim_command
 
 local on_attach_vim = function(client)
   require'completion'.on_attach(client)
-  nvim_command('autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics()')
+  nvim_command('autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({ focusable = false })')
 end
 
 local lspconfig = require'lspconfig'
@@ -372,7 +368,12 @@ require("trouble").setup {}
 
 
 require('lspfuzzy').setup {}
-require'lsp_signature'.on_attach()
+require'lsp_signature'.on_attach({
+  bind = true,
+  handler_opts = {
+    border = "single"
+  }
+})
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
@@ -425,8 +426,7 @@ saga.init_lsp_saga()
 require'lualine'.setup {
   options = {
     icons_enabled = true,
-    --theme = 'material',
-    theme = 'neon',
+    theme = 'material',
     component_separators = {'|', '|'},
     section_separators = {'', ''},
     disabled_filetypes = {}

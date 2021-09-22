@@ -20,10 +20,8 @@ set shell=/usr/local/bin/zsh
 " Plug as a plugin managet
 call plug#begin()
 " Color theme
-Plug 'NLKNguyen/papercolor-theme'
-Plug 'marko-cerovac/material.nvim'
-Plug 'tjdevries/colorbuddy.nvim'
-Plug 'rafamadriz/neon'
+Plug 'projekt0n/github-nvim-theme'
+Plug 'EdenEast/nightfox.nvim'
 
 " General purpose
 Plug 'jamessan/vim-gnupg'
@@ -43,7 +41,6 @@ Plug 'kyazdani42/nvim-web-devicons'
 Plug 'romgrk/barbar.nvim'
 Plug 'AndrewRadev/splitjoin.vim'
 Plug 'glepnir/dashboard-nvim'
-Plug 'tpope/vim-abolish'
 
 " Git integration
 Plug 'tpope/vim-fugitive'
@@ -57,11 +54,8 @@ Plug 'kyazdani42/nvim-tree.lua'
 
 " General programming
 Plug 'majutsushi/tagbar'
-Plug 'Konfekt/FastFold'
 Plug 'editorconfig/editorconfig-vim'
-Plug 'steelsojka/completion-buffers'
 Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall all'}
-Plug 'nvim-treesitter/completion-treesitter'
 Plug 'lukas-reineke/format.nvim'
 
 " Languages & LSP
@@ -76,6 +70,9 @@ Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'cespare/vim-toml'
 Plug 'folke/lsp-trouble.nvim'
 Plug 'ray-x/lsp_signature.nvim'
+Plug 'towolf/vim-helm'
+" Test
+Plug 'hrsh7th/nvim-compe'
 
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
@@ -92,8 +89,12 @@ Plug 'ekalinin/Dockerfile.vim'
 "" LSP support
 Plug 'neovim/nvim-lspconfig'
 Plug 'nvim-lua/completion-nvim'
+Plug 'steelsojka/completion-buffers'
+Plug 'nvim-treesitter/completion-treesitter'
+Plug 'hrsh7th/nvim-cmp'
 Plug 'hrsh7th/vim-vsnip'
 Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'hrsh7th/cmp-buffer'
 Plug 'glepnir/lspsaga.nvim'
 Plug 'ojroques/nvim-lspfuzzy'
 
@@ -103,6 +104,8 @@ Plug 'junegunn/limelight.vim'
 
 "" Experimental
 Plug 'weilbith/nvim-lsp-smag'
+Plug 'ibhagwan/fzf-lua'
+Plug 'vijaymarupudi/nvim-fzf'
 
 call plug#end()
 
@@ -135,36 +138,13 @@ if (has("termguicolors"))
     hi LineNr ctermbg=NONE guibg=NONE
 endif
 
-let g:nvcode_termcolors=256
 syntax on
-"colorscheme PaperColor
-colorscheme material
-
-let g:material_style = 'oceanic'
-let g:material_flat_ui=0
-let g:material_italic_comments=1
+"lua require('github-theme').setup()
+let g:nightfox_italic_comments = 1
+lua require('nightfox').set()
 
 set number
 set background=dark
-" Fix for Vimr
-if match(expand('$VIM'), 'VimR.app') > -1
-    " set true color
-    set termguicolors
-endif
-
-"let g:PaperColor_Theme_Options = {
-"  \   'language': {
-"  \     'python': {
-"  \       'highlight_builtins' : 1
-"  \     },
-"  \     'cpp': {
-"  \       'highlight_standard_library': 1
-"  \     },
-"  \     'c': {
-"  \       'highlight_builtins' : 1
-"  \     }
-"  \   }
-"  \ }
 
 set wildmenu
 set wildmode=list:longest
@@ -185,6 +165,7 @@ let g:EditorConfig_exclude_patterns = ['scp://.*']
 "" Golang
 let $GOPATH = "/Users/yurii.rochniak/Golang"
 let g:go_fmt_command = "goimports"
+let g:go_metalinter_command = 'golangci-lint'
 let g:go_highlight_functions = 1
 let g:go_highlight_methods = 1
 let g:go_highlight_structs = 1
@@ -194,7 +175,7 @@ au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
 
 "" FZF
 let g:fzf_command_prefix = ''
-nnoremap <C-p> :Files<CR>
+nnoremap <C-p> <cmd>lua require('fzf-lua').files()<CR>
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
 command! -bang -nargs=* Rg
@@ -319,6 +300,32 @@ function! OpenURLUnderCursor()
 endfunction
 nnoremap gx :call OpenURLUnderCursor()<CR>
 
+" Test
+let g:compe = {}
+let g:compe.enabled = v:true
+let g:compe.autocomplete = v:true
+let g:compe.debug = v:false
+let g:compe.min_length = 1
+let g:compe.preselect = 'enable'
+let g:compe.throttle_time = 80
+let g:compe.source_timeout = 200
+let g:compe.resolve_timeout = 800
+let g:compe.incomplete_delay = 400
+let g:compe.max_abbr_width = 100
+let g:compe.max_kind_width = 100
+let g:compe.max_menu_width = 100
+let g:compe.documentation = v:true
+
+let g:compe.source = {}
+let g:compe.source.path = v:true
+let g:compe.source.buffer = v:true
+let g:compe.source.calc = v:true
+let g:compe.source.nvim_lsp = v:true
+let g:compe.source.nvim_lua = v:true
+let g:compe.source.treesitter = v:true
+"let g:compe.source.vsnip = v:true
+"let g:compe.source.ultisnips = v:true
+
 " Lua block
 lua <<EOF
 local nvim_command = vim.api.nvim_command
@@ -356,14 +363,13 @@ require'lspconfig'.gopls.setup{
   on_attach=on_attach_vim,
   cmd = { "gopls", "-remote=auto" }
 }
---- require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
 require'lspconfig'.yamlls.setup{on_attach=on_attach_vim}
 require'lspconfig'.dockerls.setup{on_attach=on_attach_vim}
 require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
 require'lspconfig'.jsonls.setup{on_attach=on_attach_vim}
 require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
 require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
-require'lspconfig'.pyls.setup{on_attach=on_attach_vim}
+require'lspconfig'.pylsp.setup{on_attach=on_attach_vim}
 require("trouble").setup {}
 
 
@@ -426,7 +432,7 @@ saga.init_lsp_saga()
 require'lualine'.setup {
   options = {
     icons_enabled = true,
-    theme = 'material',
+    theme = 'nightfox',
     component_separators = {'|', '|'},
     section_separators = {'', ''},
     disabled_filetypes = {}
@@ -476,4 +482,5 @@ vim.api.nvim_exec([[
 
 _G.NvimTreeConfig = M
 return M
+
 EOF

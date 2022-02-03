@@ -17,112 +17,17 @@ nnoremap <C-H> <C-W><C-H>
 set rtp+=/usr/local/opt/fzf
 set shell=/usr/local/bin/zsh
 
-" Plug as a plugin managet
-call plug#begin()
-" Color theme
-Plug 'projekt0n/github-nvim-theme'
-Plug 'EdenEast/nightfox.nvim'
-
-" General purpose
-Plug 'jamessan/vim-gnupg'
-Plug 'xolox/vim-misc'
-Plug 'xolox/vim-easytags'
-Plug 'vim-voom/VOoM'
-Plug 'junegunn/fzf.vim'
-Plug 'ryanoasis/vim-devicons'
-Plug 'Lenovsky/nuake'
-Plug 'dyng/ctrlsf.vim'
-Plug 'hoob3rt/lualine.nvim'
-Plug 'francoiscabrol/ranger.vim'
-Plug 'junegunn/vim-peekaboo'
-Plug 'yaronkh/vim-winmanip'
-Plug 'Yggdroot/indentLine'
-Plug 'kyazdani42/nvim-web-devicons'
-Plug 'romgrk/barbar.nvim'
-Plug 'AndrewRadev/splitjoin.vim'
-Plug 'glepnir/dashboard-nvim'
-
-" Git integration
-Plug 'tpope/vim-fugitive'
-Plug 'tpope/vim-rhubarb'
-Plug 'stsewd/fzf-checkout.vim'
-Plug 'airblade/vim-gitgutter'
-Plug 'rhysd/git-messenger.vim'
-
-" Directory tree
-Plug 'kyazdani42/nvim-tree.lua'
-
-" General programming
-Plug 'majutsushi/tagbar'
-Plug 'editorconfig/editorconfig-vim'
-Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall all'}
-Plug 'lukas-reineke/format.nvim'
-
-" Languages & LSP
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
-Plug 'hashivim/vim-terraform'
-Plug 'martinda/Jenkinsfile-vim-syntax'
-Plug 'stephpy/vim-yaml'
-Plug 'saltstack/salt-vim'
-Plug 'norcalli/nvim-colorizer.lua'
-Plug 'andrewstuart/vim-kubernetes'
-Plug 'Glench/Vim-Jinja2-Syntax'
-Plug 'cespare/vim-toml'
-Plug 'folke/lsp-trouble.nvim'
-Plug 'ray-x/lsp_signature.nvim'
-Plug 'towolf/vim-helm'
-" Test
-Plug 'hrsh7th/nvim-compe'
-
-function! BuildComposer(info)
-  if a:info.status != 'unchanged' || a:info.force
-    if has('nvim')
-      !cargo build --release
-    else
-      !cargo build --release --no-default-features --features json-rpc
-    endif
-  endif
-endfunction
-Plug 'euclio/vim-markdown-composer', { 'do': function('BuildComposer') }
-Plug 'ekalinin/Dockerfile.vim'
-
-"" LSP support
-Plug 'neovim/nvim-lspconfig'
-Plug 'nvim-lua/completion-nvim'
-Plug 'steelsojka/completion-buffers'
-Plug 'nvim-treesitter/completion-treesitter'
-Plug 'hrsh7th/nvim-cmp'
-Plug 'hrsh7th/vim-vsnip'
-Plug 'hrsh7th/vim-vsnip-integ'
-Plug 'hrsh7th/cmp-buffer'
-Plug 'glepnir/lspsaga.nvim'
-Plug 'ojroques/nvim-lspfuzzy'
-
-"" Text writing plugins
-Plug 'junegunn/goyo.vim'
-Plug 'junegunn/limelight.vim'
-
-"" Experimental
-Plug 'weilbith/nvim-lsp-smag'
-Plug 'ibhagwan/fzf-lua'
-Plug 'vijaymarupudi/nvim-fzf'
-
-call plug#end()
-
-"" User Functions
-
-" Create user aliases with arguments
-fun! SetupCommandAlias(from, to)
-  exec 'cnoreabbrev <expr> '.a:from
-        \ .' ((getcmdtype() is# ":" && getcmdline() is# "'.a:from.'")'
-        \ .'? ("'.a:to.'") : ("'.a:from.'"))'
-endfun
-
-" Alias for NerdTree
-call SetupCommandAlias("nt","NvimTreeToggle")
-
-" Alias for JSON pretty print
-call SetupCommandAlias("ppj", "%!python -m json.tool")
+"" Source separate config files
+" Install all the plugins
+source ~/.config/nvim/config/plugins.vim
+" Colorschemes, icons, infolines, etc.
+source ~/.config/nvim/config/appearance.vim
+" Command aliases
+source ~/.config/nvim/config/aliases.vim
+" Nuake terminal
+source ~/.config/nvim/config/nuake.vim
+" Golang configurations
+source ~/.config/nvim/config/golang.vim
 
 " Configuration for Backspace key
 set backspace=start,eol,indent
@@ -131,50 +36,12 @@ set backspace=start,eol,indent
 map <A-]> :vsp <CR>:exec("tag ".expand("<cword>"))<CR>
 
 
-"" Theme config
-" checks if your terminal has 24-bit color support
-if (has("termguicolors"))
-    set termguicolors
-    hi LineNr ctermbg=NONE guibg=NONE
-endif
-
-syntax on
-"lua require('github-theme').setup()
-let g:nightfox_italic_comments = 1
-lua require('nightfox').set()
-
-set number
-set background=dark
-
-set wildmenu
-set wildmode=list:longest
-set laststatus=2
-set rtp+=$GOPATH/src/github.com/golang/lint/misc/vim
-autocmd BufWritePost,FileWritePost *.go execute 'Lint' | cwindow
-
-" Find and highlight trailing whitespaces
-:highlight ExtraWhitespace ctermbg=red guibg=red
-:match ExtraWhitespace /\s\+$/
-
-set hlsearch
-nnoremap <CR> :nohlsearch<CR><CR>
-
 "" Fugitive-vim config
 let g:EditorConfig_exclude_patterns = ['scp://.*']
 
-"" Golang
-let $GOPATH = "/Users/yurii.rochniak/Golang"
-let g:go_fmt_command = "goimports"
-let g:go_metalinter_command = 'golangci-lint'
-let g:go_highlight_functions = 1
-let g:go_highlight_methods = 1
-let g:go_highlight_structs = 1
-let g:go_highlight_operators = 1
-let g:go_highlight_build_constraints = 1
-au Filetype go nnoremap <leader>s :sp <CR>:exe "GoDef"<CR>
-
 "" FZF
 let g:fzf_command_prefix = ''
+"nnoremap <C-p> :Files<CR>
 nnoremap <C-p> <cmd>lua require('fzf-lua').files()<CR>
 
 " Similarly, we can apply it to fzf#vim#grep. To use ripgrep instead of ag:
@@ -185,13 +52,6 @@ command! -bang -nargs=* Rg
   \           : fzf#vim#with_preview('right:50%:hidden', '?'),
   \   <bang>0)
 
-" Nuake
-call SetupCommandAlias("term","Nuake")
-let g:nuake_per_tab = 1
-let g:nuake_size = 0.3
-nnoremap <C-\> :Nuake<CR>
-inoremap <C-\> <C-\><C-n>:Nuake<CR>
-tnoremap <C-\> <C-\><C-n>:Nuake<CR>
 
 "" Vagrantfile
 augroup vagrant
@@ -205,55 +65,13 @@ let g:markdown_composer_autostart = 0
 " autosave delay, cursorhold trigger, default: 4000ms
 setl updatetime=300
 
-" highlight the word under cursor (CursorMoved is inperformant)
-highlight WordUnderCursor cterm=underline gui=underline
-autocmd CursorHold * call HighlightCursorWord()
-function! HighlightCursorWord()
-    " if hlsearch is active, don't overwrite it!
-    let search = getreg('/')
-    let cword = expand('<cword>')
-    if match(cword, search) == -1
-        exe printf('match WordUnderCursor /\V\<%s\>/', escape(cword, '/\'))
-    endif
-endfunction
-
 "" Terraform plugin
 let g:terraform_fmt_on_save = 1
-
-" Search for selected text, forwards or backwards.
-vnoremap <silent> * :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy/<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
-  \escape(@", '/\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
-vnoremap <silent> # :<C-U>
-  \let old_reg=getreg('"')<Bar>let old_regtype=getregtype('"')<CR>
-  \gvy?<C-R>=&ic?'\c':'\C'<CR><C-R><C-R>=substitute(
-  \escape(@", '?\.*$^~['), '\_s\+', '\\_s\\+', 'g')<CR><CR>
-  \gVzv:call setreg('"', old_reg, old_regtype)<CR>
 
 "" Terminal
 tnoremap <Esc> <C-\><C-n>
 
 let g:fzf_checkout_git_bin = 'git'
-
-" Goyo
-autocmd! User GoyoEnter Limelight
-autocmd! User GoyoLeave Limelight!
-
-nnoremap <silent> <c-]> <cmd>lua vim.lsp.buf.definition()<CR>
-nnoremap <silent> K     <cmd>lua vim.lsp.buf.hover()<CR>
-nnoremap <silent> gD    <cmd>lua vim.lsp.buf.implementation()<CR>
-"nnoremap <silent> <c-k> <cmd>lua vim.lsp.buf.signature_help()<CR>
-nnoremap <silent> 1gD   <cmd>lua vim.lsp.buf.type_definition()<CR>
-nnoremap <silent> gr    <cmd>lua vim.lsp.buf.references()<CR>
-nnoremap <silent> g0    <cmd>lua vim.lsp.buf.document_symbol()<CR>
-nnoremap <silent> gW    <cmd>lua vim.lsp.buf.workspace_symbol()<CR>
-nnoremap <silent> gd    <cmd>lua vim.lsp.buf.declaration()<CR>
-
-" Do not spawn too many instances of gopls
-let g:go_gopls_enabled = 1
-let g:go_gopls_options = ['-remote=auto']
 
 " Use <Tab> and <S-Tab> to navigate through popup menu
 inoremap <expr> <Tab>   pumvisible() ? "\<C-n>" : "\<Tab>"
@@ -262,31 +80,13 @@ inoremap <expr> <S-Tab> pumvisible() ? "\<C-p>" : "\<S-Tab>"
 " Set completeopt to have a better completion experience
 set completeopt=menuone,noinsert,noselect
 
-let g:completion_chain_complete_list = [
-    \{'complete_items': ['lsp', 'buffers']},
-    \{'mode': '<c-p>'},
-    \{'mode': '<c-n>'}
-\]
-let g:completion_auto_change_source = 1
-
 " Avoid showing message extra message when using completion
 set shortmess+=c
 
 let g:indentLine_enabled = 0
 let g:indentLine_char_list = ['|', '¦', '┆', '┊']
 
-" barbar.nvim
-let bufferline = {}
-let bufferline.closable = v:false
-let bufferline.clickable = v:false
-
 let g:dashboard_default_executive ='fzf'
-let g:nvim_tree_follow = 1
-let g:nvim_tree_disable_netrw = 0
-let g:nvim_tree_auto_open = 1
-let g:nvim_tree_auto_close = 1
-let g:nvim_tree_auto_ignore_ft = [ 'startify', 'dashboard' ]
-let g:nvim_tree_disable_window_picker = 1
 
 " Workaround for gx issue:
 " https://github.com/vim/vim/issues/4738
@@ -300,86 +100,19 @@ function! OpenURLUnderCursor()
 endfunction
 nnoremap gx :call OpenURLUnderCursor()<CR>
 
-" Test
-let g:compe = {}
-let g:compe.enabled = v:true
-let g:compe.autocomplete = v:true
-let g:compe.debug = v:false
-let g:compe.min_length = 1
-let g:compe.preselect = 'enable'
-let g:compe.throttle_time = 80
-let g:compe.source_timeout = 200
-let g:compe.resolve_timeout = 800
-let g:compe.incomplete_delay = 400
-let g:compe.max_abbr_width = 100
-let g:compe.max_kind_width = 100
-let g:compe.max_menu_width = 100
-let g:compe.documentation = v:true
-
-let g:compe.source = {}
-let g:compe.source.path = v:true
-let g:compe.source.buffer = v:true
-let g:compe.source.calc = v:true
-let g:compe.source.nvim_lsp = v:true
-let g:compe.source.nvim_lua = v:true
-let g:compe.source.treesitter = v:true
-"let g:compe.source.vsnip = v:true
-"let g:compe.source.ultisnips = v:true
-
 " Lua block
 lua <<EOF
-local nvim_command = vim.api.nvim_command
 
-local on_attach_vim = function(client)
-  require'completion'.on_attach(client)
-  nvim_command('autocmd CursorHold * lua vim.lsp.diagnostic.show_line_diagnostics({ focusable = false })')
-end
+-- Configurations from separate configs
+require('config.cmp')
+require('config.lsp')
+require('config.lualine')
+require('config.format')
+require('config.neo-tree')
 
-local lspconfig = require'lspconfig'
-local configs = require'lspconfig/configs'
+-- Individual plugins
+require"fidget".setup{}
 
--- Setup diagnostics
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = false,
-    underline = false,
-    signs = true,
-    update_in_insert = true,
-  }
-)
--- Groovy LSP is manual
-configs.groovy_lsp = {
-  default_config = {
-    cmd = {'java', '-jar', '/Users/yurii.rochniak/sandbox/groovy-language-server/build/libs/groovy-language-server-all.jar'};
-    filetypes = {'groovy'};
-    root_dir = function(fname)
-      return lspconfig.util.find_git_ancestor(fname) or vim.loop.os_homedir()
-    end;
-    settings = {};
-  };
-}
-require'lspconfig'.groovy_lsp.setup{on_attach=on_attach_vim}
-require'lspconfig'.gopls.setup{
-  on_attach=on_attach_vim,
-  cmd = { "gopls", "-remote=auto" }
-}
-require'lspconfig'.yamlls.setup{on_attach=on_attach_vim}
-require'lspconfig'.dockerls.setup{on_attach=on_attach_vim}
-require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
-require'lspconfig'.jsonls.setup{on_attach=on_attach_vim}
-require'lspconfig'.tsserver.setup{on_attach=on_attach_vim}
-require'lspconfig'.bashls.setup{on_attach=on_attach_vim}
-require'lspconfig'.pylsp.setup{on_attach=on_attach_vim}
-require("trouble").setup {}
-
-
-require('lspfuzzy').setup {}
-require'lsp_signature'.on_attach({
-  bind = true,
-  handler_opts = {
-    border = "single"
-  }
-})
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
@@ -387,100 +120,4 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
   },
 }
-
-require "format".setup {
-    ["*"] = {
-        {cmd = {"sed -i 's/[ \t]*$//'"}} -- remove trailing whitespace
-    },
-    vim = {
-        {
-            cmd = {"luafmt -w replace"},
-            start_pattern = "^lua << EOF$",
-            end_pattern = "^EOF$"
-        }
-    },
-    vimwiki = {
-        {
-            cmd = {"prettier -w --parser babel"},
-            start_pattern = "^{{{javascript$",
-            end_pattern = "^}}}$"
-        }
-    },
-    lua = {
-        {
-            cmd = {
-                function(file)
-                    return string.format("luafmt -l %s -w replace %s", vim.bo.textwidth, file)
-                end
-            }
-        }
-    },
-    markdown = {
-        {cmd = {"prettier -w"}},
-        {
-            cmd = {"black"},
-            start_pattern = "^```python$",
-            end_pattern = "^```$",
-            target = "current"
-        }
-    }
-}
-
-local saga = require 'lspsaga'
-saga.init_lsp_saga()
-
-require'lualine'.setup {
-  options = {
-    icons_enabled = true,
-    theme = 'nightfox',
-    component_separators = {'|', '|'},
-    section_separators = {'', ''},
-    disabled_filetypes = {}
-  },
-  sections = {
-    lualine_a = {'mode'},
-    lualine_b = {'branch'},
-    lualine_c = {'filename'},
-    lualine_x = {'encoding', 'fileformat', 'filetype'},
-    lualine_y = {'progress'},
-    lualine_z = {'location'}
-  },
-  inactive_sections = {
-    lualine_a = {},
-    lualine_b = {},
-    lualine_c = {'filename'},
-    lualine_x = {'location'},
-    lualine_y = {},
-    lualine_z = {}
-  },
-  tabline = {},
-  extensions = {'fzf'}
-}
-
-local M = {}
-
-require'nvim-tree.events'.on_nvim_tree_ready(function ()
-  vim.g.nvim_tree_ready = 1
-end)
-
-function M.update_cwd()
-  if vim.g.nvim_tree_ready == 1 then
-    local view = require'nvim-tree.view'
-    local lib = require'nvim-tree.lib'
-    if view.win_open() then
-      lib.change_dir(vim.fn.getcwd())
-    end
-  end
-end
-
-vim.api.nvim_exec([[
-  augroup NvimTreeConfig
-    au!
-    au DirChanged * lua NvimTreeConfig.update_cwd()
-  augroup END
-  ]], false)
-
-_G.NvimTreeConfig = M
-return M
-
 EOF

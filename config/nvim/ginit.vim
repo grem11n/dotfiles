@@ -1,4 +1,5 @@
 " Required for Neovim-qt GUI
+" set guifont=Hack\ Nerd\ Font:h16
 set guifont=FiraCode\ Nerd\ Font:h17
 set mouse=a
 so $HOME/.config/nvim/macmap.vim

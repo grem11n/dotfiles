@@ -6,7 +6,7 @@ if (has("termguicolors"))
 endif
 
 syntax on
-lua require('nightfox').load()
+colorscheme nightfox
 
 set number
 set background=dark
@@ -73,8 +73,10 @@ lua <<EOF
 -- Nightfox colorscheme
 local nightfox = require('nightfox')
 nightfox.setup({
-    styles = {
-        comments = "italic"
+    options = {
+        styles = {
+            comments = "italic"
+        }
     }
 })
 EOF

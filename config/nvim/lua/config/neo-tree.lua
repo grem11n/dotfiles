@@ -1,9 +1,9 @@
 require("neo-tree").setup {
   filesystem = {
-    filters = { --These filters are applied to both browsing and searching
-      show_hidden = false,
-      respect_gitignore = true,
+    hijack_netrw_behavior = "disabled",
+    filtered_items = { --These filters are applied to both browsing and searching
+      hide_dotfiles = false,
+      hide_gitignored = false,
     },
-    use_libuv_file_watcher = false,
   }
 }

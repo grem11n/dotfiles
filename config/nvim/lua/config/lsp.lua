@@ -6,14 +6,20 @@ local configs = require'lspconfig/configs'
 local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Setup diagnostics
-vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
-  vim.lsp.diagnostic.on_publish_diagnostics, {
-    virtual_text = false,
+vim.diagnostic.config({
     underline = false,
+    virtual_text = false,
     signs = true,
-    update_in_insert = true,
-  }
-)
+    update_in_insert = false,
+})
+--vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
+--  vim.lsp.diagnostic.on_publish_diagnostics, {
+--    virtual_text = false,
+--    underline = false,
+--    signs = true,
+--    update_in_insert = true,
+--  }
+--)
 
 -- Setup LSPs
 require'lspconfig'.groovyls.setup{
@@ -23,7 +29,6 @@ require'lspconfig'.groovyls.setup{
 require'lspconfig'.gopls.setup{
   cmd = { "gopls", "-remote=auto" },
   capabilities = capabilities,
-  
 }
 require'lspconfig'.golangci_lint_ls.setup{
   capabilities = capabilities
@@ -33,7 +38,7 @@ require'lspconfig'.diagnosticls.setup{
 }
 require'lspconfig'.yamlls.setup{
   capabilities = capabilities,
-} 
+}
 require'lspconfig'.dockerls.setup{
   capabilities = capabilities,
 }

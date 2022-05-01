@@ -1,4 +1,4 @@
-require "format".setup {
+require("lsp-format").setup {
     ["*"] = {
         {cmd = {"sed -i 's/[ \t]*$//'"}} -- remove trailing whitespace
     },

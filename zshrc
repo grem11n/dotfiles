@@ -150,7 +150,7 @@ function pubip {
 }
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/Cellar/tfenv/1.0.2/bin/terraform terraform
+complete -o nospace -C /usr/local/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin/terraform terraform
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -207,8 +207,10 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
+alias aws-auth='aws-google-auth --resolve-aliases --no-cache -a'
+
 # Tfenv
-export PATH="/usr/local/Cellar/tfenv/1.0.1/bin:$PATH"
+export PATH="/usr/local/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin:$PATH"
 
 # Restart wifi
 function wifit () {
@@ -229,15 +231,20 @@ if [[ ${TERM} == 'xterm-kitty' ]] ; then
     alias ssh="kitty +kitten ssh"
 fi
 
+alias tf_vend_rm='find . -name vendor -type d -exec rm -rf {} \;'
+alias tf_cache_rm='find . -name .terraform -type d -exec rm -rf {} \;'
+
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+source /Users/yurii.rochniak/Library/Preferences/org.dystroy.broot/launcher/bash/br
 
 # Fuzzy finder
 source $HOME/.config/fzfrc
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+#export NVM_DIR="$HOME/.nvm"
+#[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+#[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
 
 # Perl
 PATH="/Users/yurii.rochniak/perl5/bin${PATH:+:${PATH}}"; export PATH;

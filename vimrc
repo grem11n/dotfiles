@@ -15,7 +15,7 @@ nnoremap <C-H> <C-W><C-H>
 
 " Find and Shell
 set rtp+=/usr/local/opt/fzf
-set shell=/usr/local/bin/zsh
+set shell=/opt/homebrew/bin/zsh
 
 "" Source separate config files
 " Install all the plugins
@@ -30,6 +30,8 @@ source ~/.config/nvim/config/nuake.vim
 source ~/.config/nvim/config/golang.vim
 " UltiSnips
 source ~/.config/nvim/config/UltiSnips.vim
+" Neovide
+source ~/.config/nvim/config/neovide.vim
 
 " Configuration for Backspace key
 set backspace=start,eol,indent
@@ -129,6 +131,7 @@ require('config.lsp')
 require('config.lualine')
 require('config.format')
 require('config.neo-tree')
+require('config.dashboard')
 
 -- Individual plugins
 require"fidget".setup{}
@@ -136,8 +139,9 @@ require"fidget".setup{}
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages
+  ignore_install = { "phpdoc", "dockerfile" },
   highlight = {
-    enable = true,
+    enable = false,
   },
 }
 EOF

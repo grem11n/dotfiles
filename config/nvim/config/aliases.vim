@@ -10,7 +10,7 @@ endfun
 call SetupCommandAlias("nt","NeoTreeRevealToggle")
 
 " Alias for JSON pretty print
-call SetupCommandAlias("ppj", "%!python -m json.tool")
+call SetupCommandAlias("ppj", "%!python3 -m json.tool")
 
 " Nuake
 call SetupCommandAlias("term","Nuake")

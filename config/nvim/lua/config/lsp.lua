@@ -7,11 +7,14 @@ local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protoco
 
 -- Setup diagnostics
 vim.diagnostic.config({
-    underline = false,
+    underline = true,
     virtual_text = false,
     signs = true,
-    update_in_insert = false,
+    float = true,
+    update_in_insert = false
 })
+vim.o.updatetime = 250
+vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
 --vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
 --  vim.lsp.diagnostic.on_publish_diagnostics, {
 --    virtual_text = false,
@@ -24,7 +27,7 @@ vim.diagnostic.config({
 -- Setup LSPs
 require'lspconfig'.groovyls.setup{
     capabilities = capabilities,
-    cmd = {'java', '-jar', '/Users/yuriirochniak/.vim/lsps/groovy-language-server-all.jar'};
+    cmd = {'java', '-jar', '/Users/yurii.rochniak/.vim/lsps/groovy-language-server-all.jar'};
 }
 require'lspconfig'.gopls.setup{
   cmd = { "gopls", "-remote=auto" },

@@ -14,12 +14,15 @@ Plug 'junegunn/limelight.vim'
 
 " General purpose
 Plug 'jamessan/vim-gnupg'
+Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
 Plug 'junegunn/fzf.vim'
 Plug 'dyng/ctrlsf.vim'
 Plug 'junegunn/vim-peekaboo'
 Plug 'yaronkh/vim-winmanip'
 Plug 'Yggdroot/indentLine'
 Plug 'glepnir/dashboard-nvim'
+Plug 'nvim-lua/plenary.nvim'
+Plug 'nvim-telescope/telescope.nvim', { 'tag': '0.1.0' }
 
 function! BuildComposer(info)
   if a:info.status != 'unchanged' || a:info.force
@@ -53,7 +56,9 @@ Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSInstall all'}
 Plug 'lukas-reineke/format.nvim'
 
 " Languages & LSP
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+"Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+Plug 'ray-x/go.nvim'
+Plug 'ray-x/guihua.lua'
 Plug 'hashivim/vim-terraform'
 Plug 'martinda/Jenkinsfile-vim-syntax'
 Plug 'stephpy/vim-yaml'

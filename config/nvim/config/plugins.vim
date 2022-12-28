@@ -1,6 +1,7 @@
 call plug#begin()
 " Color theme
 Plug 'EdenEast/nightfox.nvim'
+Plug 'catppuccin/nvim', {'as': 'catppuccin'}
 Plug 'ntpeters/vim-better-whitespace'
 " Icons (many plugins depend on this)
 Plug 'ryanoasis/vim-devicons'
@@ -11,6 +12,7 @@ Plug 'hoob3rt/lualine.nvim'
 "" Text writing plugins
 Plug 'junegunn/goyo.vim'
 Plug 'junegunn/limelight.vim'
+Plug 'Pocco81/true-zen.nvim'
 
 " General purpose
 Plug 'jamessan/vim-gnupg'
@@ -69,6 +71,7 @@ Plug 'Glench/Vim-Jinja2-Syntax'
 Plug 'cespare/vim-toml'
 Plug 'towolf/vim-helm'
 Plug 'ekalinin/Dockerfile.vim'
+Plug 'williamboman/mason.nvim'
 
 "" LSP support
 Plug 'neovim/nvim-lspconfig'
@@ -85,9 +88,13 @@ Plug 'hrsh7th/cmp-cmdline'
 Plug 'ray-x/cmp-treesitter'
 Plug 'hrsh7th/nvim-cmp'
 " Snippets
-Plug 'SirVer/ultisnips'
-Plug 'quangnguyen30192/cmp-nvim-ultisnips'
-Plug 'honza/vim-snippets'
+"Plug 'SirVer/ultisnips'
+"Plug 'quangnguyen30192/cmp-nvim-ultisnips'
+"Plug 'honza/vim-snippets'
+Plug 'hrsh7th/cmp-vsnip'
+Plug 'hrsh7th/vim-vsnip'
+Plug 'hrsh7th/vim-vsnip-integ'
+Plug 'rafamadriz/friendly-snippets'
 
 "" Experimental // Test
 Plug 'ibhagwan/fzf-lua', {'branch': 'main'}
@@ -99,6 +106,7 @@ Plug 'dstein64/vim-startuptime'
 Plug 'mfussenegger/nvim-dap'
 Plug 'rcarriga/nvim-dap-ui'
 Plug 'leoluz/nvim-dap-go'
+Plug 'theHamsta/nvim-dap-virtual-text'
 
 "" Good, but not often used
 Plug 'vim-voom/VOoM'

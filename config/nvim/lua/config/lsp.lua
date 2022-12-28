@@ -24,6 +24,9 @@ vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {
 --  }
 --)
 
+-- Mason: plugin to install language servers
+require("mason").setup()
+
 -- Setup LSPs
 require'lspconfig'.groovyls.setup{
     capabilities = capabilities,

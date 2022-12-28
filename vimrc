@@ -135,7 +135,7 @@ require('config.dashboard')
 
 -- Individual plugins
 require"fidget".setup{}
-
+require("nvim-dap-virtual-text").setup()
 
 require'nvim-treesitter.configs'.setup {
   ensure_installed = "all", -- one of "all", "maintained" (parsers with maintainers), or a list of languages

@@ -6,7 +6,14 @@ if (has("termguicolors"))
 endif
 
 syntax on
-colorscheme nightfox
+"colorscheme nightfox
+let g:catppuccin_flavour = "macchiato" " latte, frappe, macchiato, mocha
+
+lua << EOF
+require("catppuccin").setup()
+EOF
+
+colorscheme catppuccin
 
 set number
 set background=dark
@@ -79,4 +86,5 @@ nightfox.setup({
         }
     }
 })
+require("true-zen").setup {}
 EOF

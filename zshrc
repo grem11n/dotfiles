@@ -62,15 +62,19 @@ export ZSH_COMMAND_TIME_MIN_SECONDS=15
 zplug "zpm-zsh/colorize"
 zplug "arzzen/calc.plugin.zsh"
 zplug "hlissner/zsh-autopair", defer:2
-zplug "zpm-zsh/tmux"
+# zplug "zpm-zsh/tmux"
 zplug "droctothorpe/kubecolor"
 zplug "ael-code/zsh-colored-man-pages"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "romkatv/powerlevel10k", as:theme, depth:1
+zplug "zsh-users/zsh-autosuggestions", depth:1
+zplug "unixorn/fzf-zsh-plugin", depth:1
+zplug "reegnz/jq-zsh-plugin", depth:1
+zplug "plugins/git", from:oh-my-zsh, if:"(( $+commands[git] ))"
 
 export LS_COLORS='di=0;36:fi=0:ln=31:pi=5:so=5:bd=5:cd=5:or=31:mi=0:ex=0;32:*.rpm=0:*.tar=0;31'
 
-plugins=(git aws common-aliases encode64 gem pip python rsync terraform vagrant brew docker fzf vault)
+#plugins=(git aws common-aliases encode64 gem pip python rsync terraform vagrant brew docker fzf vault ripgrep)
 
 zplug load
 
@@ -78,8 +82,9 @@ zplug load
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
 export PATH="/usr/local/sbin:$PATH"
 ## Python binaries
-export PATH="/Users/yurii.rochniak/Library/Python/2.7/bin:$PATH"
-export PATH="/Users/yurii.rochniak/Library/Python/3.8/bin:$PATH"
+PY3_VER=$(python3 --version | awk '{print $2}' | awk -F "." '{print $1"."$2}')
+export PATH="${HOME}/Library/Python/2.7/bin:$PATH"
+export PATH="${HOME}/Library/Python/${PY3_VER}/bin:$PATH"
 # export MANPATH="/usr/local/man:$MANPATH"
 source $ZSH/oh-my-zsh.sh
 
@@ -207,7 +212,7 @@ export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
 source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
-alias aws-auth='aws-google-auth --resolve-aliases --no-cache -a'
+alias aws-auth='aws-google-auth --resolve-aliases --no-cache -a --bg-response js_enabled'
 
 # Tfenv
 export PATH="/usr/local/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin:$PATH"
@@ -236,8 +241,6 @@ alias tf_cache_rm='find . -name .terraform -type d -exec rm -rf {} \;'
 
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
-
-source /Users/yurii.rochniak/Library/Preferences/org.dystroy.broot/launcher/bash/br
 
 # Fuzzy finder
 source $HOME/.config/fzfrc

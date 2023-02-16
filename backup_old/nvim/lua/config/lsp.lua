@@ -3,7 +3,7 @@ local configs = require'lspconfig/configs'
 
 
 -- Setup lspconfig.
-local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+local capabilities = require('cmp_nvim_lsp').update_capabilities(vim.lsp.protocol.make_client_capabilities())
 
 -- Setup diagnostics
 vim.diagnostic.config({
@@ -65,5 +65,5 @@ require'lspconfig'.pylsp.setup{
 }
 
 require("trouble").setup {}
---require('lspfuzzy').setup {}
+require('lspfuzzy').setup {}
 require 'lspsaga'.setup{}

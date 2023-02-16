@@ -1,0 +1,2 @@
+# Don't want to sync the lock file
+config/nvim/lazy-lock.json

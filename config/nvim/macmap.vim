@@ -7,6 +7,8 @@
 " We don't change 'cpoptions' here, because it would not be set properly when
 " a .vimrc file is found later.  Thus don't use line continuation and use
 " <special> in mappings.
+"
+" This remap is required for GoNvim
 
 nnoremap <special> <D-n> :confirm enew<CR>
 vmap <special> <D-n> <Esc><D-n>gv

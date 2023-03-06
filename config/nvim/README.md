@@ -15,4 +15,4 @@
 - [ ] Split `lazy.lua` file into multiple smaller files
 - [x] Install only required Treesitter languages
 - [ ] Remove remaining vimscript
-- [ ] Check which formatter to use
+- [x] Check which formatter to use

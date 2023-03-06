@@ -1,7 +1,4 @@
 " Allow copy paste in neovim
-let g:neovide_input_use_logo = 1
-let g:neovide_cursor_trail_length = 0
-let g:neovide_cursor_animation_length = 0
 map <D-v> "+p<CR>
 map! <D-v> <C-R>+
 tmap <D-v> <C-R>+

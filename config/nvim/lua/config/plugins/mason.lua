@@ -38,6 +38,7 @@ mason_lspconfig.setup({
         "jsonls", -- JSON
         "lua_ls", -- LUA
         "pylsp", -- Python
+        "ruby_ls", -- Ruby
         "taplo", -- TOML
         "yamlls", -- YAML
 	},
@@ -53,6 +54,7 @@ mason_null_ls.setup({
         "luaformatter",
         "markdownlint",
         "pylint",
+        "rubocop",
         "stylua",
         "yamlfmt",
 	},

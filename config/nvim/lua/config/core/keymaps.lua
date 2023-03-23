@@ -18,7 +18,7 @@ vim.keymap.set('n', '<A-]>', '<cmd>vsp <CR><cmd>lua vim.lsp.buf.definition()<CR>
 
 -- FZF Lua
 vim.keymap.set('n', '<C-p>', function() require('fzf-lua').files() end)
-vim.keymap.set('n', '<C-g>', function() require('fzf-lua').live_grep() end)
+vim.keymap.set('n', '<C-s>', function() require('fzf-lua').live_grep() end)
 
 -- user commands
 vim.api.nvim_create_user_command('Nt', 'NeoTreeRevealToggle', {})

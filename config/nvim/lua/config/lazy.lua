@@ -57,6 +57,7 @@ local plugins = {
     'yaronkh/vim-winmanip', -- move open splits around
     'AndrewRadev/splitjoin.vim', -- swap between one-liner and multiline with gJ and gS
     'famiu/bufdelete.nvim', -- close buffers easier
+    'Bekaboo/deadcolumn.nvim', -- show max char column warning
     { 'simrat39/symbols-outline.nvim', config = true }, -- modern tagbar
     { "dstein64/vim-startuptime", cmd = "StartupTime" }, -- show startup time if needed
     { 'EtiamNullam/deferred-clipboard.nvim', -- get system clipboard to nvim
@@ -191,6 +192,11 @@ local plugins = {
     { "folke/trouble.nvim", -- pretty list for LSP
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = true,
+    },
+    { "ErichDonGubler/lsp_lines.nvim", -- show LSP messages in virtual text lines
+        config = function()
+            require("lsp_lines").setup()
+        end,
     },
 }
 

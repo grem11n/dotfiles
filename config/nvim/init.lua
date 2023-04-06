@@ -12,6 +12,7 @@ require('config.plugins.format')
 require('config.plugins.neo-tree')
 require('config.plugins.true-zen')
 require('config.plugins.indent-blankline')
+require('config.plugins.deadcolumn')
 
 -- gui
 require('config.gui.neovide')

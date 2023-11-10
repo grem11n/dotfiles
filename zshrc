@@ -4,9 +4,11 @@
 if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
   source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
+# Homebrew
+export HOMEBREW_DIR="/opt/homebrew"
 # Path to your oh-my-zsh installation.
 export ZSH=/Users/yurii.rochniak/.oh-my-zsh
-export ZPLUG_HOME=/usr/local/opt/zplug
+export ZPLUG_HOME=${HOMEBREW_DIR}/opt/zplug
 source $ZPLUG_HOME/init.zsh
 
 # Set name of the theme to load.
@@ -81,6 +83,10 @@ zplug load
 # User configuration
 export PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/opt/X11/bin:/usr/local/git/bin:/usr/local/MacGPG2/bin"
 export PATH="/usr/local/sbin:$PATH"
+export PATH="${HOMEBREW_DIR}/bin:$PATH"
+export PATH="${HOMEBREW_DIR}/sbin:$PATH"
+# GNU binaries
+PATH="${HOMEBREW_DIR}/opt/findutils/libexec/gnubin:$PATH"
 ## Python binaries
 PY3_VER=$(python3 --version | awk '{print $2}' | awk -F "." '{print $1"."$2}')
 export PATH="${HOME}/Library/Python/2.7/bin:$PATH"
@@ -124,7 +130,7 @@ fi
 export GPG_TTY=`tty`
 alias ll="ls -l"
 alias la="ls -lah"
-alias mtr="sudo /usr/local/sbin/mtr"
+alias mtr="sudo ${HOMEBREW_DIR}/Cellar/mtr/0.95/sbin/mtr"
 alias flush_dns="sudo dscacheutil -flushcache;sudo killall -HUP mDNSResponder"
 alias srk="ssh-keygen -R"
 alias sshq="ssh -q -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no"
@@ -155,7 +161,7 @@ function pubip {
 }
 
 autoload -U +X bashcompinit && bashcompinit
-complete -o nospace -C /usr/local/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin/terraform terraform
+complete -o nospace -C ${HOMEBREW_DIR}/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin/terraform terraform
 
 # tabtab source for serverless package
 # uninstall by removing these lines or running `tabtab uninstall serverless`
@@ -184,10 +190,6 @@ local ret_status="%(?:%{$fg_bold[green]%}>> :%{$fg_bold[red]%}>> %s)"
 
 test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell_integration.zsh"
 
-# thefuck
-eval $(thefuck --alias)
-fpath+=${ZDOTDIR:-~}/.zsh_functions
-
 # Kube
 # source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 # PS1='$(kube_ps1)'$PS1
@@ -210,12 +212,12 @@ function kns {
 export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
-source /usr/local/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ${HOMEBREW_DIR}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
 
 alias aws-auth='aws-google-auth --resolve-aliases --no-cache -a --bg-response js_enabled'
 
 # Tfenv
-export PATH="/usr/local/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin:$PATH"
+export PATH="${HOMEBREW_DIR}/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin:$PATH"
 
 # Restart wifi
 function wifit () {
@@ -258,4 +260,4 @@ PERL_MM_OPT="INSTALL_BASE=/Users/yurii.rochniak/perl5"; export PERL_MM_OPT;
 
 # Ruby
 export PATH="/usr/local/lib/ruby/gems/3.0.0/bin:$PATH"
-export PATH="/usr/local/opt/ruby/bin:$PATH"
+export PATH="${HOMEBREW_DIR}/Cellar/ruby/3.2.0/bin:$PATH"

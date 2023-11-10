@@ -57,13 +57,8 @@ local plugins = {
     'yaronkh/vim-winmanip', -- move open splits around
     'AndrewRadev/splitjoin.vim', -- swap between one-liner and multiline with gJ and gS
     'famiu/bufdelete.nvim', -- close buffers easier
-    'Bekaboo/deadcolumn.nvim', -- show max char column warning
     { 'simrat39/symbols-outline.nvim', config = true }, -- modern tagbar
     { "dstein64/vim-startuptime", cmd = "StartupTime" }, -- show startup time if needed
-    { 'EtiamNullam/deferred-clipboard.nvim', -- get system clipboard to nvim
-        opts = { lazy = true, },
-        config = true,
-    },
     { 'sindrets/diffview.nvim', -- diff view for git
         dependencies = { 'nvim-lua/plenary.nvim' },
     },
@@ -75,18 +70,28 @@ local plugins = {
             }
         end,
     },
+    {
+      "folke/which-key.nvim", -- shows which key does what
+      event = "VeryLazy",
+      init = function()
+        vim.o.timeout = true
+        vim.o.timeoutlen = 300
+      end,
+      opts = {}
+    },
 
     -- --------------------------------------------------------------------------
     -- Search and other operations --
     -- --------------------------------------------------------------------------
-    'dyng/ctrlsf.vim', -- bulk refactoring
-    { 'nvim-telescope/telescope.nvim', -- nvim telescpe
-        tag = '0.1.1',
-        dependencies = { 'nvim-lua/plenary.nvim' },
-    },
-    { 'ibhagwan/fzf-lua', -- FZF in LUA
-        dependencies = { 'nvim-tree/nvim-web-devicons',
-        }
+    'dyng/ctrlsf.vim', -- bulk refactoring, edit several files at the time
+    {
+      "ibhagwan/fzf-lua",
+      -- optional for icon support
+      dependencies = { "nvim-tree/nvim-web-devicons" },
+      config = function()
+        -- calling `setup` is optional for customization
+        require("fzf-lua").setup({})
+      end
     },
     { 'windwp/nvim-spectre', -- find and replace
         dependencies = { 'nvim-lua/plenary.nvim' },
@@ -111,10 +116,9 @@ local plugins = {
     "jose-elias-alvarez/null-ls.nvim", -- integrate formatters into LSP
     'lukas-reineke/format.nvim', -- wrapper to format code on save
     'jamessan/vim-gnupg', -- work with GPG encrypted files
-    'hashivim/vim-terraform', -- not sure if I need it
     'martinda/Jenkinsfile-vim-syntax', -- recognises Jenkinsfile as Groovy
+    'hashivim/vim-terraform', -- Terraform (legacy)
     'towolf/vim-helm',
-    'vim-voom/VOoM', -- not sure if I will ever use it
     { 'williamboman/mason.nvim', config = true }, -- install LSP and DAP things
     { "williamboman/mason-lspconfig.nvim", -- LSP integration for Mason
         dependencies = {
@@ -136,8 +140,8 @@ local plugins = {
         },
     },
     { "ray-x/lsp_signature.nvim", config = true }, -- method signature helper
-    { 'tami5/lspsaga.nvim', config = true }, -- useful LSP commands
-    { 'j-hui/fidget.nvim', config = true }, -- LSP loading spinner
+    { 'kkharji/lspsaga.nvim', config = true }, -- useful LSP commands
+    { 'j-hui/fidget.nvim', config = true, tag = "legacy" }, -- LSP loading spinner
     { 'hrsh7th/nvim-cmp', -- completion. Configuration is in another file
         dependencies = {
             'hrsh7th/cmp-nvim-lsp',
@@ -173,6 +177,9 @@ local plugins = {
     },
     { 'euclio/vim-markdown-composer', -- markdown preview
         build = "cargo build --release --locked",
+    },
+    { 'toppair/peek.nvim', -- markdown preview with mermaid
+        build = 'deno task --quiet build:fast',
     },
     { 'nvim-treesitter/nvim-treesitter', -- treesitter
         build = ":TSUpdate",

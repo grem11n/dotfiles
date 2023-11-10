@@ -2,9 +2,17 @@ local wezterm = require 'wezterm'
 local act = wezterm.action
 
 return {
-  font = wezterm.font 'FiraCode Nerd Font Mono',
-  font_size = 18,
+  --font = wezterm.font 'FiraCode Nerd Font Mono',
+  font = wezterm.font_with_fallback({
+    'Mononoki Nerd Font',
+    'Agave Nerd Font',
+    --'Martian Mono',
+    --'Iosevka Nerd Font',
+    --'VictorMono Nerd Font',
+  }),
+  font_size = 20,
   color_scheme = "Builtin Dark",
+  --color_scheme = 'Builtin Light',
   window_background_opacity = 0.90,
 
   keys = {
@@ -73,5 +81,5 @@ return {
         mods = "CMD",
         action = wezterm.action.Nop,
     },
-},
+  },
 }

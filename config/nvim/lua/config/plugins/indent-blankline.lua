@@ -1,5 +1,3 @@
-require("indent_blankline").setup({
+require("ibl").setup({
     enabled = false,
-    char_list = {'|', '¦', '┆', '┊'},
-    space_char_blankline = " ",
 })

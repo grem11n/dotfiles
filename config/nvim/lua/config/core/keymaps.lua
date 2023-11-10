@@ -1,3 +1,6 @@
+-- Leader key
+vim.g.mapleader = ' '
+vim.g.maplocalleader = ' '
 -- Re-map keys for splits
 vim.keymap.set('n', '<C-J>', '<C-W><C-J>')
 vim.keymap.set('n', '<C-K>', '<C-W><C-K>')
@@ -15,15 +18,22 @@ vim.keymap.set('n', 'g0', '<cmd>lua vim.lsp.buf.document_symbol()<CR>', { silent
 vim.keymap.set('n', 'gW', '<cmd>lua vim.lsp.buf.workspace_symbol()<CR>', { silent = true })
 vim.keymap.set('n', 'gd', '<cmd>lua vim.lsp.buf.declaration()<CR>', { silent = true })
 vim.keymap.set('n', '<A-]>', '<cmd>vsp <CR><cmd>lua vim.lsp.buf.definition()<CR>')
+vim.keymap.set('n', '<C-d>', "<cmd>Lspsaga hover_doc<cr>", {silent = true})
 
--- FZF Lua
+-- FZF
 vim.keymap.set('n', '<C-p>', function() require('fzf-lua').files() end)
 vim.keymap.set('n', '<C-s>', function() require('fzf-lua').live_grep() end)
+vim.keymap.set('n', '<C-f>', function() require('fzf-lua').grep_cword() end)
+-- Telescope
+-- vim.keymap.set('n', '<C-p>', function() require('telescope.builtin').find_files() end)
+-- vim.keymap.set('n', '<C-s>', function() require('telescope.builtin').live_grep() end)
+-- vim.keymap.set('n', '<C-f>', function() require('telescope.builtin').grep_string() end)
 
 -- user commands
-vim.api.nvim_create_user_command('Nt', 'NeoTreeRevealToggle', {})
+vim.api.nvim_create_user_command('Nt', 'NeoTreeRevealToggle', {}) -- file tree
 vim.api.nvim_create_user_command('So', 'SymbolsOutline', {})
 vim.api.nvim_create_user_command('Ppj', '%!python3 -m json.tool', {})
+vim.api.nvim_create_user_command('Gm', 'GitMessenger', {})
 
 local vagrant = vim.api.nvim_create_augroup('vagrant', { clear = true })
 vim.api.nvim_create_autocmd({ 'BufRead', 'BufNewFile' }, {

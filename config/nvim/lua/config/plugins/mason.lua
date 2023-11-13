@@ -34,12 +34,14 @@ mason_lspconfig.setup({
         "golangci_lint_ls", -- Go
         "gopls", -- Go
         "groovyls", -- Groovy
+        "helm_ls", -- Helm
         -- "jqls", -- JQ
         "jsonls", -- JSON
         "lua_ls", -- LUA
         "pylsp", -- Python
         "ruby_ls", -- Ruby
         "taplo", -- TOML
+        "terraformls", -- Terraform
         "yamlls", -- YAML
 	},
 	-- auto-install configured servers (with lspconfig)

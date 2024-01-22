@@ -9,11 +9,19 @@ vim.opt.background = "dark"
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>noh<cr>', { silent = true })
 
-require('catppuccin').setup {
-   flavour = "macchiato", -- latte, frappe, macchiato, mocha
-    background = { -- :h background
-        light = "latte",
-        dark = "macchiato",
-    },
-}
-require('catppuccin').load()
+-- Catppuccin theme
+--require('catppuccin').setup {
+--   flavour = "macchiato", -- latte, frappe, macchiato, mocha
+--    background = { -- :h background
+--        light = "latte",
+--        dark = "macchiato",
+--    },
+--}
+--require('catppuccin').load()
+
+-- AYU theme
+require('ayu').setup({
+    mirage = true,
+    overrides = {},
+})
+require('ayu').colorscheme()

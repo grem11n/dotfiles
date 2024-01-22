@@ -21,6 +21,8 @@ local plugins = {
     "RRethy/vim-illuminate", -- highlight functon under cursor after certain time
     'lukas-reineke/indent-blankline.nvim', -- indent lines
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 }, -- colorscheme
+    { "Shatur/neovim-ayu", name = "ayu", priority = 1000 }, -- colorscheme
+    { "nordtheme/vim", name = "nord", priority = 1000 }, -- colorscheme
     { "freddiehaddad/feline.nvim", config = true }, -- statusline
     { "akinsho/bufferline.nvim", -- bufferline
         version = "v3.*",
@@ -41,6 +43,7 @@ local plugins = {
     { "Pocco81/true-zen.nvim", -- focus mode
         dependencies = { "folke/twilight.nvim" },
     },
+    { 'folke/zen-mode.nvim' }, -- focus mode
     { "nvim-neo-tree/neo-tree.nvim", -- directory tree
         cmd = "NeoTreeRevealToggle",
         dependencies = {
@@ -48,6 +51,15 @@ local plugins = {
             "nvim-tree/nvim-web-devicons",
             "MunifTanjim/nui.nvim",
         },
+    },
+    {
+      'stevearc/oil.nvim',
+      opts = {
+          default_file_explorer = false,
+      },
+      setup = true,
+      -- Optional dependencies
+      dependencies = { "nvim-tree/nvim-web-devicons" },
     },
 
     -- --------------------------------------------------------------------------
@@ -116,6 +128,15 @@ local plugins = {
         version = '*',
         config = true,
     },
+    {
+      "NeogitOrg/neogit",
+      dependencies = {
+        "nvim-lua/plenary.nvim",         -- required
+        "sindrets/diffview.nvim",        -- optional
+        "ibhagwan/fzf-lua",              -- optional
+      },
+      config = true
+    },
 
     -- --------------------------------------------------------------------------
     -- LSP , DAP, and Languages --
@@ -126,7 +147,7 @@ local plugins = {
     'jamessan/vim-gnupg', -- work with GPG encrypted files
     'martinda/Jenkinsfile-vim-syntax', -- recognises Jenkinsfile as Groovy
     'hashivim/vim-terraform', -- Terraform (legacy)
-    'towolf/vim-helm',
+    --'towolf/vim-helm',
     { 'williamboman/mason.nvim', config = true }, -- install LSP and DAP things
     { "williamboman/mason-lspconfig.nvim", -- LSP integration for Mason
         dependencies = {
@@ -149,7 +170,7 @@ local plugins = {
     },
     { "ray-x/lsp_signature.nvim", config = true }, -- method signature helper
     { 'kkharji/lspsaga.nvim', config = true }, -- useful LSP commands
-    { 'j-hui/fidget.nvim', config = true, tag = "legacy" }, -- LSP loading spinner
+    { 'j-hui/fidget.nvim', config = true }, -- LSP loading spinner
     { 'hrsh7th/nvim-cmp', -- completion. Configuration is in another file
         dependencies = {
             'hrsh7th/cmp-nvim-lsp',

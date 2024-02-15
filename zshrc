@@ -10,6 +10,7 @@ export HOMEBREW_DIR="/opt/homebrew"
 export ZSH=/Users/yurii.rochniak/.oh-my-zsh
 export ZPLUG_HOME=${HOMEBREW_DIR}/opt/zplug
 source $ZPLUG_HOME/init.zsh
+export XDG_CONFIG_HOME="$HOME/.config"
 
 # Set name of the theme to load.
 # Look in ~/.oh-my-zsh/themes/
@@ -261,3 +262,9 @@ PERL_MM_OPT="INSTALL_BASE=/Users/yurii.rochniak/perl5"; export PERL_MM_OPT;
 # Ruby
 export PATH="/usr/local/lib/ruby/gems/3.0.0/bin:$PATH"
 export PATH="${HOMEBREW_DIR}/Cellar/ruby/3.2.0/bin:$PATH"
+
+tmux-window-name() {
+	($HOME/.tmux/plugins/tmux-window-name/scripts/rename_session_windows.py &)
+}
+
+add-zsh-hook chpwd tmux-window-name

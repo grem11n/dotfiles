@@ -39,6 +39,7 @@ mason_lspconfig.setup({
         "jsonls", -- JSON
         "lua_ls", -- LUA
         "pylsp", -- Python
+        "pyright", -- Python
         "ruby_ls", -- Ruby
         "taplo", -- TOML
         "terraformls", -- Terraform

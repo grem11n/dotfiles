@@ -45,7 +45,6 @@ local plugins = {
     },
     { 'folke/zen-mode.nvim' }, -- focus mode
     { "nvim-neo-tree/neo-tree.nvim", -- directory tree
-        cmd = "NeoTreeRevealToggle",
         dependencies = {
             "nvim-lua/plenary.nvim",
             "nvim-tree/nvim-web-devicons",
@@ -100,6 +99,7 @@ local plugins = {
         -- refer to the configuration section below
       }
     },
+    'AndrewRadev/linediff.vim', -- show diff between code blocks
     -- --------------------------------------------------------------------------
     -- Search and other operations --
     -- --------------------------------------------------------------------------
@@ -112,6 +112,10 @@ local plugins = {
         -- calling `setup` is optional for customization
         require("fzf-lua").setup({})
       end
+    },
+    {
+      'nvim-telescope/telescope.nvim', tag = '0.1.5',
+      dependencies = { 'nvim-lua/plenary.nvim' }
     },
     { 'windwp/nvim-spectre', -- find and replace
         dependencies = { 'nvim-lua/plenary.nvim' },
@@ -136,6 +140,20 @@ local plugins = {
         "ibhagwan/fzf-lua",              -- optional
       },
       config = true
+    },
+    {
+        "kdheepak/lazygit.nvim",
+    	cmd = {
+    		"LazyGit",
+    		"LazyGitConfig",
+    		"LazyGitCurrentFile",
+    		"LazyGitFilter",
+    		"LazyGitFilterCurrentFile",
+    	},
+        -- optional for floating window border decoration
+        dependencies = {
+            "nvim-lua/plenary.nvim",
+        },
     },
 
     -- --------------------------------------------------------------------------
@@ -233,6 +251,65 @@ local plugins = {
         config = function()
             require("lsp_lines").setup()
         end,
+    },
+    { 'linux-cultist/venv-selector.nvim', -- select Python venv
+      dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
+      opts = {},
+      event = 'VeryLazy',
+    },
+
+    -- --------------------------------------------------------------------------
+    -- Neorg --
+    -- --------------------------------------------------------------------------
+    {
+        "vhyrro/luarocks.nvim",
+        priority = 1001, -- We'd like this plugin to load first out of the rest
+        config = true, -- This automatically runs `require("luarocks-nvim").setup()`
+    },
+    {
+      "nvim-neorg/neorg",
+      dependencies = {
+          "vhyrro/luarocks.nvim",
+      },
+      lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
+      version = "*", -- Pin Neorg to the latest stable release
+      config = function()
+          require("neorg").setup({
+            load = {
+              ["core.defaults"] = {},
+              ["core.concealer"] = {
+                  config = {
+                      icon_preset = "diamond",
+                  },
+                  code_block ={
+                      content_only = true,
+                  },
+              },
+              ["core.dirman"] = {
+                config = {
+                  workspaces = {
+                    notes = "~/Documents/neorg",
+                    preply = "~/Documents/preply-neorg",
+                  },
+                  default_workspace = "preply",
+                },
+              },
+              ["core.completion"] = {
+                  config = {
+                      engine = 'nvim-cmp',
+                      name = "[Norg]",
+                  },
+              },
+              ["core.export.markdown"] = {},
+              ["core.ui"] = {},
+              --["core.ui.calendar"] = {},
+              ["core.summary"] = {}
+            },
+          })
+
+          vim.wo.foldlevel = 99
+          vim.wo.conceallevel = 2
+      end,
     },
 }
 

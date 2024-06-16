@@ -28,22 +28,27 @@ mason.setup()
 mason_lspconfig.setup({
 	-- list of servers for mason to install
 	ensure_installed = {
+        "shellcheck", -- Bash
         "bashls", -- Bash
         "docker_compose_language_service", -- Docker Compose
         "dockerls", -- Dockerfile
         "golangci_lint_ls", -- Go
         "gopls", -- Go
-        "groovyls", -- Groovy
+        "graphql", -- GraphQL
         "helm_ls", -- Helm
-        -- "jqls", -- JQ
+        "jedi_language_server", -- Python
         "jsonls", -- JSON
         "lua_ls", -- LUA
-        "pylsp", -- Python
+        "marksman", -- Markdown
         "pyright", -- Python
-        "ruby_ls", -- Ruby
         "taplo", -- TOML
         "terraformls", -- Terraform
+        "tsserver", -- Typescript
         "yamlls", -- YAML
+        -- "groovyls", -- Groovy
+        -- "jqls", -- JQ
+        -- "ruby_ls", -- Ruby
+      --  "pylsp", -- Python
 	},
 	-- auto-install configured servers (with lspconfig)
 	automatic_installation = true, -- not the same as ensure_installed
@@ -58,6 +63,8 @@ mason_null_ls.setup({
         "markdownlint",
         "pylint",
         "rubocop",
+        "shellharden", -- Bash
+        "shfmt", -- Bash
         "stylua",
         "yamlfmt",
 	},

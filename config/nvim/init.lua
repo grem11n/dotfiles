@@ -16,6 +16,7 @@ require('config.plugins.treesitter')
 require('config.plugins.true-zen')
 --require('config.plugins.telescope')
 require('config.plugins.peek-nvim')
+--require('config.plugin.neorg')
 
 -- gui
 require('config.gui.neovide')

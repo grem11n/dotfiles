@@ -27,3 +27,6 @@ vim.g.markdown_composer_autostart = 0
 
 -- Format TF files on save
 vim.g.terraform_fmt_on_save = 1
+
+--- Env for Python
+vim.g.python3_host_prog = os.getenv("HOME") .. ".pyenv/versions/3.11.8/envs/nvim/bin/python"

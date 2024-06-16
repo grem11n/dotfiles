@@ -2,6 +2,9 @@ local lspconfig = require('lspconfig')
 local configs = require('lspconfig.configs')
 local util = require('lspconfig.util')
 
+-- Disable logging until required
+vim.lsp.set_log_level("off")
+
 
 -- Setup lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
@@ -67,27 +70,44 @@ require'lspconfig'.tsserver.setup{
 require'lspconfig'.bashls.setup{
   capabilities = capabilities,
 }
+
+vim.env.PYENV_VERSION = vim.fn.system('pyenv version'):match('(%S+)%s+%(.-%)')
 require'lspconfig'.pylsp.setup{
   on_attach = custom_attach,
   settings = {
-      pylsp = {
+    configurationSources = {"flake8"},
+    formatCommand = {"black"},
+    pylsp = {
       plugins = {
+          maxLineLength = 120,
           -- formatter options
           black = { enabled = true },
           autopep8 = { enabled = false },
           yapf = { enabled = false },
           -- linter options
-          pylint = { enabled = true, executable = "pylint" },
+          pylint = {
+            enabled = true,
+            executable = "pylint",
+            args = {'--ignore=E501,E231,C0114,C0115,C0116', '-'},
+          },
           pyflakes = { enabled = false },
           pycodestyle = { enabled = false },
           -- type checker
           pylsp_mypy = { enabled = true },
           -- auto-completion options
-          jedi_completion = { fuzzy = true },
+          jedi_completion = {
+              fuzzy = true,
+              include_class_objects = true,
+              include_function_objects = true
+          },
+          jedi = {
+              environment = os.getenv("VENV_PATH_PYLSP")
+          },
           -- import sorting
           pyls_isort = { enabled = true },
+          ignore={'E501', 'E231'},
       },
-      },
+    },
   },
   flags = {
       debounce_text_changes = 200,
@@ -98,6 +118,8 @@ require'lspconfig'.pylsp.setup{
 require("lspconfig").pyright.setup {
   capabilities = capabilities,
 }
+
+require'lspconfig'.terraformls.setup{}
 
 require("trouble").setup {}
 --require('lspfuzzy').setup {}

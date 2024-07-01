@@ -25,7 +25,7 @@ local plugins = {
     { "nordtheme/vim", name = "nord", priority = 1000 }, -- colorscheme
     { "freddiehaddad/feline.nvim", config = true }, -- statusline
     { "akinsho/bufferline.nvim", -- bufferline
-        version = "v3.*",
+        version = "v4.*",
         dependencies = { 'nvim-tree/nvim-web-devicons' },
         config = true,
     },
@@ -60,6 +60,35 @@ local plugins = {
       -- Optional dependencies
       dependencies = { "nvim-tree/nvim-web-devicons" },
     },
+    {
+      "mikavilpas/yazi.nvim",
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+      },
+      event = "VeryLazy",
+      keys = {
+        -- 👇 in this section, choose your own keymappings!
+        {
+          "<leader>-",
+          function()
+            require("yazi").yazi()
+          end,
+          desc = "Open the file manager",
+        },
+        {
+          -- Open in the current working directory
+          "<leader>cw",
+          function()
+            require("yazi").yazi(nil, vim.fn.getcwd())
+          end,
+          desc = "Open the file manager in nvim's working directory" ,
+        },
+      },
+      ---@type YaziConfig
+      opts = {
+        open_for_directories = false,
+      },
+    },
 
     -- --------------------------------------------------------------------------
     -- General Purpose --
@@ -81,6 +110,19 @@ local plugins = {
             }
         end,
     },
+    { "numToStr/FTerm.nvim",
+        event = "VeryLazy",
+        keys = {
+            {
+                "<leader>t",
+                function()
+                    require("FTerm").toggle()
+                end,
+                desc = "Open floating terminal",
+            },
+        },
+    },
+    { 'voldikss/vim-floaterm' },
     {
       "folke/which-key.nvim", -- shows which key does what
       event = "VeryLazy",
@@ -247,13 +289,14 @@ local plugins = {
         dependencies = { "nvim-tree/nvim-web-devicons" },
         config = true,
     },
-    { "ErichDonGubler/lsp_lines.nvim", -- show LSP messages in virtual text lines
-        config = function()
-            require("lsp_lines").setup()
-        end,
-    },
+    --{ "ErichDonGubler/lsp_lines.nvim", -- show LSP messages in virtual text lines
+    --    config = function()
+    --        require("lsp_lines").setup()
+    --    end,
+    --},
     { 'linux-cultist/venv-selector.nvim', -- select Python venv
       dependencies = { 'neovim/nvim-lspconfig', 'nvim-telescope/telescope.nvim', 'mfussenegger/nvim-dap-python' },
+      branch = "regexp",
       opts = {},
       event = 'VeryLazy',
     },

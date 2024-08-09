@@ -9,6 +9,7 @@ require("nvim-treesitter.configs").setup({
         "gomod",
         "gosum",
         "hcl",
+        "html",
         "json",
         "lua",
         "make",

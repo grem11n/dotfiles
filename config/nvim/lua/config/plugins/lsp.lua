@@ -47,11 +47,20 @@ require'lspconfig'.diagnosticls.setup{
   capabilities = capabilities,
 }
 require'lspconfig'.yamlls.setup{
+  on_attach = function(client, bufnr)
+    -- Disable LSP for Helm templates (files with .yaml or .yml extension inside 'templates' directory)
+    if vim.fn.expand('%:p'):match('.*/templates/.*%.ya?ml$') then
+      client.server_capabilities.document_formatting = false
+      client.server_capabilities.document_range_formatting = false
+      vim.lsp.buf_detach_client(bufnr, client.id)
+    end
+  end,
   capabilities = capabilities,
   settings = {
 	yaml = {
 		-- FIX mapKeyOrder warning
 		keyOrdering = false,
+        redhat = { telemetry = { enabled = false } },
 	},
   },
 }
@@ -126,19 +135,12 @@ require("trouble").setup {}
 --require('lspfuzzy').setup {}
 require 'lspsaga'.setup{}
 
---if not configs.helm_ls then
---  configs.helm_ls = {
---    default_config = {
---      cmd = {"helm_ls", "serve"},
---      filetypes = {'helm'},
---      root_dir = function(fname)
---        return util.root_pattern('Chart.yaml')(fname)
---      end,
---    },
---  }
---end
---
---lspconfig.helm_ls.setup {
---  filetypes = {"helm"},
---  cmd = {"helm_ls", "serve"},
---}
+require'lspconfig'.helm_ls.setup {
+  settings = {
+    ['helm-ls'] = {
+      yamlls = {
+        path = "yaml-language-server",
+      }
+    }
+  }
+}

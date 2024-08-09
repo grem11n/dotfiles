@@ -207,7 +207,7 @@ local plugins = {
     'jamessan/vim-gnupg', -- work with GPG encrypted files
     'martinda/Jenkinsfile-vim-syntax', -- recognises Jenkinsfile as Groovy
     'hashivim/vim-terraform', -- Terraform (legacy)
-    --'towolf/vim-helm',
+    'towolf/vim-helm',
     { 'williamboman/mason.nvim', config = true }, -- install LSP and DAP things
     { "williamboman/mason-lspconfig.nvim", -- LSP integration for Mason
         dependencies = {
@@ -229,7 +229,7 @@ local plugins = {
         },
     },
     { "ray-x/lsp_signature.nvim", config = true }, -- method signature helper
-    { 'kkharji/lspsaga.nvim', config = true }, -- useful LSP commands
+    { 'nvimdev/lspsaga.nvim', config = true }, -- useful LSP commands
     { 'j-hui/fidget.nvim', config = true }, -- LSP loading spinner
     { 'hrsh7th/nvim-cmp', -- completion. Configuration is in another file
         dependencies = {
@@ -270,6 +270,20 @@ local plugins = {
     { 'toppair/peek.nvim', -- markdown preview with mermaid
         build = 'deno task --quiet build:fast',
     },
+    {
+        "OXY2DEV/markview.nvim",
+        lazy = false,      -- Recommended
+        -- ft = "markdown" -- If you decide to lazy-load anyway
+
+        dependencies = {
+            -- You will not need this if you installed the
+            -- parsers manually
+            -- Or if the parsers are in your $RUNTIMEPATH
+            "nvim-treesitter/nvim-treesitter",
+
+            "nvim-tree/nvim-web-devicons"
+        }
+    },
     { 'nvim-treesitter/nvim-treesitter', -- treesitter
         build = ":TSUpdate",
     },
@@ -300,60 +314,7 @@ local plugins = {
       opts = {},
       event = 'VeryLazy',
     },
-
-    -- --------------------------------------------------------------------------
-    -- Neorg --
-    -- --------------------------------------------------------------------------
-    {
-        "vhyrro/luarocks.nvim",
-        priority = 1001, -- We'd like this plugin to load first out of the rest
-        config = true, -- This automatically runs `require("luarocks-nvim").setup()`
-    },
-    {
-      "nvim-neorg/neorg",
-      dependencies = {
-          "vhyrro/luarocks.nvim",
-      },
-      lazy = false, -- Disable lazy loading as some `lazy.nvim` distributions set `lazy = true` by default
-      version = "*", -- Pin Neorg to the latest stable release
-      config = function()
-          require("neorg").setup({
-            load = {
-              ["core.defaults"] = {},
-              ["core.concealer"] = {
-                  config = {
-                      icon_preset = "diamond",
-                  },
-                  code_block ={
-                      content_only = true,
-                  },
-              },
-              ["core.dirman"] = {
-                config = {
-                  workspaces = {
-                    notes = "~/Documents/neorg",
-                    preply = "~/Documents/preply-neorg",
-                  },
-                  default_workspace = "preply",
-                },
-              },
-              ["core.completion"] = {
-                  config = {
-                      engine = 'nvim-cmp',
-                      name = "[Norg]",
-                  },
-              },
-              ["core.export.markdown"] = {},
-              ["core.ui"] = {},
-              --["core.ui.calendar"] = {},
-              ["core.summary"] = {}
-            },
-          })
-
-          vim.wo.foldlevel = 99
-          vim.wo.conceallevel = 2
-      end,
-    },
+    { "github/copilot.vim" }, -- copilot
 }
 
 local opts = {}

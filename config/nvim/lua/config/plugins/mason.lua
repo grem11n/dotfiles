@@ -28,7 +28,6 @@ mason.setup()
 mason_lspconfig.setup({
 	-- list of servers for mason to install
 	ensure_installed = {
-        "shellcheck", -- Bash
         "bashls", -- Bash
         "docker_compose_language_service", -- Docker Compose
         "dockerls", -- Dockerfile
@@ -63,6 +62,7 @@ mason_null_ls.setup({
         "markdownlint",
         "pylint",
         "rubocop",
+        "shellcheck", -- Bash
         "shellharden", -- Bash
         "shfmt", -- Bash
         "stylua",

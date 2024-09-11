@@ -40,6 +40,7 @@ mason_lspconfig.setup({
         "lua_ls", -- LUA
         "marksman", -- Markdown
         "pyright", -- Python
+        "ruff", -- Python
         "taplo", -- TOML
         "terraformls", -- Terraform
         "tsserver", -- Typescript

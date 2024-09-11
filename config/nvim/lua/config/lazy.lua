@@ -163,7 +163,14 @@ local plugins = {
         dependencies = { 'nvim-lua/plenary.nvim' },
         config = true,
     },
-
+    {
+      "otavioschwanck/arrow.nvim",
+      opts = {
+        show_icons = true,
+        leader_key = ';', -- Recommended to be a single key
+        buffer_leader_key = 'm', -- Per Buffer Mappings
+      }
+    },
     -- --------------------------------------------------------------------------
     -- Git Integration --
     -- --------------------------------------------------------------------------
@@ -270,20 +277,20 @@ local plugins = {
     { 'toppair/peek.nvim', -- markdown preview with mermaid
         build = 'deno task --quiet build:fast',
     },
-    {
-        "OXY2DEV/markview.nvim",
-        lazy = false,      -- Recommended
-        -- ft = "markdown" -- If you decide to lazy-load anyway
+    --{
+    --    "OXY2DEV/markview.nvim",
+    --    lazy = false,      -- Recommended
+    --    -- ft = "markdown" -- If you decide to lazy-load anyway
 
-        dependencies = {
-            -- You will not need this if you installed the
-            -- parsers manually
-            -- Or if the parsers are in your $RUNTIMEPATH
-            "nvim-treesitter/nvim-treesitter",
+    --    dependencies = {
+    --        -- You will not need this if you installed the
+    --        -- parsers manually
+    --        -- Or if the parsers are in your $RUNTIMEPATH
+    --        "nvim-treesitter/nvim-treesitter",
 
-            "nvim-tree/nvim-web-devicons"
-        }
-    },
+    --        "nvim-tree/nvim-web-devicons"
+    --    }
+    --},
     { 'nvim-treesitter/nvim-treesitter', -- treesitter
         build = ":TSUpdate",
     },
@@ -315,6 +322,10 @@ local plugins = {
       event = 'VeryLazy',
     },
     { "github/copilot.vim" }, -- copilot
+    -- --------------------------------------------------------------------------
+    -- Misc --
+    -- --------------------------------------------------------------------------
+    --{ "rest-nvim/rest.nvim" }, -- REST client
 }
 
 local opts = {}

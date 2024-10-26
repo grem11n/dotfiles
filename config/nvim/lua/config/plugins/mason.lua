@@ -31,6 +31,7 @@ mason_lspconfig.setup({
         "bashls", -- Bash
         "docker_compose_language_service", -- Docker Compose
         "dockerls", -- Dockerfile
+        "eslint", -- Javascript/Typescript
         "golangci_lint_ls", -- Go
         "gopls", -- Go
         "graphql", -- GraphQL
@@ -43,7 +44,7 @@ mason_lspconfig.setup({
         "ruff", -- Python
         "taplo", -- TOML
         "terraformls", -- Terraform
-        "tsserver", -- Typescript
+        "ts_ls", -- Typescript
         "yamlls", -- YAML
         -- "groovyls", -- Groovy
         -- "jqls", -- JQ

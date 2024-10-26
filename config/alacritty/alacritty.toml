@@ -2,9 +2,9 @@ import = [
     "~/.config/alacritty/themes/themes/xterm.toml",
 ]
 
-[shell]
-program = "/opt/homebrew/bin/tmux"
-args = ["new-session", "-A", "-D", "-s", "main"]
+#[shell]
+#program = "/opt/homebrew/bin/tmux"
+#args = ["new-session", "-A", "-D", "-s", "main"]
 
 [font]
 size = 20

@@ -73,7 +73,10 @@ require'lspconfig'.bashls.setup{
 require'lspconfig'.jsonls.setup{
   capabilities = capabilities,
 }
-require'lspconfig'.tsserver.setup{
+require'lspconfig'.ts_ls.setup{
+  capabilities = capabilities,
+}
+require'lspconfig'.eslint.setup{
   capabilities = capabilities,
 }
 require'lspconfig'.bashls.setup{
@@ -137,7 +140,11 @@ require'lspconfig'.terraformls.setup{}
 
 require("trouble").setup {}
 --require('lspfuzzy').setup {}
-require 'lspsaga'.setup{}
+require 'lspsaga'.setup{
+  lightbulb = {
+    enable = false, -- disables both
+  },
+}
 
 require'lspconfig'.helm_ls.setup {
   settings = {

@@ -22,7 +22,6 @@ local plugins = {
     'lukas-reineke/indent-blankline.nvim', -- indent lines
     { "catppuccin/nvim", name = "catppuccin", priority = 1000 }, -- colorscheme
     { "Shatur/neovim-ayu", name = "ayu", priority = 1000 }, -- colorscheme
-    { "nordtheme/vim", name = "nord", priority = 1000 }, -- colorscheme
     { "freddiehaddad/feline.nvim", config = true }, -- statusline
     { "akinsho/bufferline.nvim", -- bufferline
         version = "v4.*",
@@ -75,14 +74,6 @@ local plugins = {
           end,
           desc = "Open the file manager",
         },
-        {
-          -- Open in the current working directory
-          "<leader>cw",
-          function()
-            require("yazi").yazi(nil, vim.fn.getcwd())
-          end,
-          desc = "Open the file manager in nvim's working directory" ,
-        },
       },
       ---@type YaziConfig
       opts = {
@@ -102,15 +93,7 @@ local plugins = {
     { 'sindrets/diffview.nvim', -- diff view for git
         dependencies = { 'nvim-lua/plenary.nvim' },
     },
-    { "akinsho/toggleterm.nvim", -- terminal
-        version = '*',
-        config = function()
-            require("toggleterm").setup{
-              open_mapping = [[<c-\>]]
-            }
-        end,
-    },
-    { "numToStr/FTerm.nvim",
+    { "numToStr/FTerm.nvim", -- terminal
         event = "VeryLazy",
         keys = {
             {
@@ -122,7 +105,6 @@ local plugins = {
             },
         },
     },
-    { 'voldikss/vim-floaterm' },
     {
       "folke/which-key.nvim", -- shows which key does what
       event = "VeryLazy",
@@ -159,9 +141,11 @@ local plugins = {
       'nvim-telescope/telescope.nvim', tag = '0.1.5',
       dependencies = { 'nvim-lua/plenary.nvim' }
     },
-    { 'windwp/nvim-spectre', -- find and replace
-        dependencies = { 'nvim-lua/plenary.nvim' },
-        config = true,
+    {
+      'MagicDuck/grug-far.nvim', -- search and replace
+      config = function()
+        require('grug-far').setup({});
+      end
     },
     {
       "otavioschwanck/arrow.nvim",
@@ -236,7 +220,12 @@ local plugins = {
         },
     },
     { "ray-x/lsp_signature.nvim", config = true }, -- method signature helper
-    { 'nvimdev/lspsaga.nvim', config = true }, -- useful LSP commands
+    { 'nvimdev/lspsaga.nvim', -- useful LSP commands
+        dependencies = {
+            'nvim-treesitter/nvim-treesitter', -- optional
+            'nvim-tree/nvim-web-devicons',     -- optional
+        },
+    },
     { 'j-hui/fidget.nvim', config = true }, -- LSP loading spinner
     { 'hrsh7th/nvim-cmp', -- completion. Configuration is in another file
         dependencies = {
@@ -277,20 +266,6 @@ local plugins = {
     { 'toppair/peek.nvim', -- markdown preview with mermaid
         build = 'deno task --quiet build:fast',
     },
-    --{
-    --    "OXY2DEV/markview.nvim",
-    --    lazy = false,      -- Recommended
-    --    -- ft = "markdown" -- If you decide to lazy-load anyway
-
-    --    dependencies = {
-    --        -- You will not need this if you installed the
-    --        -- parsers manually
-    --        -- Or if the parsers are in your $RUNTIMEPATH
-    --        "nvim-treesitter/nvim-treesitter",
-
-    --        "nvim-tree/nvim-web-devicons"
-    --    }
-    --},
     { 'nvim-treesitter/nvim-treesitter', -- treesitter
         build = ":TSUpdate",
     },
@@ -322,10 +297,42 @@ local plugins = {
       event = 'VeryLazy',
     },
     { "github/copilot.vim" }, -- copilot
+    {
+      {
+        "CopilotC-Nvim/CopilotChat.nvim",
+        branch = "canary",
+        dependencies = {
+          { "github/copilot.vim" }, -- or github/copilot.vim
+          { "nvim-lua/plenary.nvim" }, -- for curl, log wrapper
+        },
+        build = "make tiktoken", -- Only on MacOS or Linux
+        config = true,
+      },
+    },
     -- --------------------------------------------------------------------------
     -- Misc --
     -- --------------------------------------------------------------------------
-    --{ "rest-nvim/rest.nvim" }, -- REST client
+    {
+      "epwalsh/obsidian.nvim",
+      version = "*",  -- recommended, use latest release instead of latest commit
+      lazy = true,
+      ft = "markdown",
+      event = {
+        "BufReadPre /Users/yrochniak/Documents/Obsidian/Preply/**.md",
+        "BufNewFile /Users/yrochniak/Documents/Obsidian/Preply/**.md",
+      },
+      dependencies = {
+        "nvim-lua/plenary.nvim",
+      },
+      opts = {
+        workspaces = {
+          {
+            name = "preply",
+            path = "~/Documents/Obsidian/Preply",
+          },
+        },
+      },
+    }
 }
 
 local opts = {}

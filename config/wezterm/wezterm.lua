@@ -4,7 +4,7 @@ local wezterm = require 'wezterm'
 local config = wezterm.config_builder()
 
 -- Start tmux by default
-config.default_prog = { 'tmux', 'new-session', '-A', '-D', '-s', 'main' }
+config.default_prog = { '/opt/homebrew/bin/tmux', 'new-session', '-A', '-D', '-s', 'main' }
 -- Disable system window decorations
 config.window_decorations = "NONE"
 -- Disable Wezterm's tabs, because Tmux has them

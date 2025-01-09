@@ -1,0 +1,7 @@
+font-family = "Mononoki Nerd Font"
+font-size = 24
+background-opacity = 0.9
+window-decoration = false
+theme = "ayu mirage"
+initial-command = "/opt/homebrew/bin/tmux new-session -A -D -s main"
+link-url = true

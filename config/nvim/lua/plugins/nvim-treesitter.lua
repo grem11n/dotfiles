@@ -1,0 +1,40 @@
+-- treesitter
+return { 'nvim-treesitter/nvim-treesitter',
+  build = ":TSUpdate",
+  opts = {
+    ensure_installed = {
+      "bash",
+      "c",
+      "diff",
+      "gitcommit",
+      "gitignore",
+      "go",
+      "gomod",
+      "gosum",
+      "hcl",
+      "html",
+      "json",
+      "lua",
+      "make",
+      "markdown",
+      "mermaid",
+      "python",
+      "query",
+      "regex",
+      "rego",
+      "terraform",
+      "toml",
+      "vim",
+      "vimdoc",
+      "yaml",
+    },
+    sync_install = false,
+    ignore_install = {
+      "phpdoc",
+      -- "dockerfile"
+    },
+    highlight = {
+      enable = false,
+    },
+  },
+}

@@ -8,6 +8,9 @@ vim.lsp.set_log_level("off")
 
 -- Setup lspconfig.
 local capabilities = require('cmp_nvim_lsp').default_capabilities(vim.lsp.protocol.make_client_capabilities())
+local on_attach = function(client, bufnr)
+    require("lsp-format").on_attach(client, bufnr)
+end
 
 -- Setup diagnostics
 vim.diagnostic.config({
@@ -32,10 +35,10 @@ vim.o.updatetime = 250
 require("mason").setup()
 
 -- Setup LSPs
-require'lspconfig'.groovyls.setup{
-    capabilities = capabilities,
-    cmd = {'java', '-jar', '/Users/yurii.rochniak/.vim/lsps/groovy-language-server-all.jar'};
-}
+--require'lspconfig'.groovyls.setup{
+--    capabilities = capabilities,
+--    cmd = {'java', '-jar', '/Users/yurii.rochniak/.vim/lsps/groovy-language-server-all.jar'};
+--}
 require'lspconfig'.gopls.setup{
   cmd = { "gopls", "-remote=auto" },
   capabilities = capabilities,
@@ -78,6 +81,23 @@ require'lspconfig'.ts_ls.setup{
 }
 require'lspconfig'.eslint.setup{
   capabilities = capabilities,
+  bin = 'eslint', -- or `eslint_d`
+  code_actions = {
+    enable = true,
+    apply_on_save = {
+      enable = true,
+      types = { "directive", "problem", "suggestion", "layout" },
+    },
+    disable_rule_comment = {
+      enable = true,
+      location = "separate_line", -- or `same_line`
+    },
+  },
+  diagnostics = {
+    enable = true,
+    report_unused_disable_directives = false,
+    run_on = "type", -- or `save`
+  },
 }
 require'lspconfig'.bashls.setup{
   capabilities = capabilities,
@@ -136,7 +156,10 @@ require("lspconfig").ruff.setup {
   capabilities = capabilities,
 }
 
-require'lspconfig'.terraformls.setup{}
+require'lspconfig'.terraformls.setup{
+  capabilities = capabilities,
+  on_attach = on_attach,
+}
 
 require("trouble").setup {}
 --require('lspfuzzy').setup {}

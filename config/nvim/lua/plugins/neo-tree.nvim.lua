@@ -1,10 +1,12 @@
 -- directory tree
 return { "nvim-neo-tree/neo-tree.nvim",
-  lazy = true,
   dependencies = {
     "nvim-lua/plenary.nvim",
     "nvim-tree/nvim-web-devicons",
     "MunifTanjim/nui.nvim",
+  },
+  cmd = {
+    "Neotree",
   },
   opts = {
     use_libuv_file_watcher = true,

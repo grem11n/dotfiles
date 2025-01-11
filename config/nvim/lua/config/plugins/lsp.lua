@@ -21,15 +21,6 @@ vim.diagnostic.config({
     update_in_insert = false
 })
 vim.o.updatetime = 250
---vim.cmd [[autocmd! CursorHold,CursorHoldI * lua vim.diagnostic.open_float(nil, {focus=false})]]
---vim.lsp.handlers["textDocument/publishDiagnostics"] = vim.lsp.with(
---  vim.lsp.diagnostic.on_publish_diagnostics, {
---    virtual_text = false,
---    underline = false,
---    signs = true,
---    update_in_insert = true,
---  }
---)
 
 -- Mason: plugin to install language servers
 require("mason").setup()
@@ -159,14 +150,6 @@ require("lspconfig").ruff.setup {
 require'lspconfig'.terraformls.setup{
   capabilities = capabilities,
   on_attach = on_attach,
-}
-
-require("trouble").setup {}
---require('lspfuzzy').setup {}
-require 'lspsaga'.setup{
-  lightbulb = {
-    enable = false, -- disables both
-  },
 }
 
 require'lspconfig'.helm_ls.setup {

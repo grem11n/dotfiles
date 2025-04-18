@@ -105,7 +105,10 @@ require'lspconfig'.pylsp.setup{
           maxLineLength = 120,
           -- formatter options
           black = { enabled = true },
-          flake8 = { enabled = true },
+          flake8 = {
+            enabled = true,
+            maxLineLength = 100,
+          },
           autopep8 = { enabled = false },
           yapf = { enabled = false },
           -- linter options

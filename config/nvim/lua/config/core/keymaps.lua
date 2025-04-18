@@ -30,7 +30,7 @@ vim.keymap.set('n', '<C-f>', function() require('fzf-lua').grep_cword() end)
 -- vim.keymap.set('n', '<C-f>', function() require('telescope.builtin').grep_string() end)
 
 -- user commands
-vim.api.nvim_create_user_command('Nt', 'Neotree toggle', {}) -- file tree
+vim.api.nvim_create_user_command('Nt', 'lua Snacks.explorer.open()', {}) -- file tree
 vim.api.nvim_create_user_command('So', 'SymbolsOutline', {})
 vim.api.nvim_create_user_command('Ppj', '%!jq', {})
 vim.api.nvim_create_user_command('Upj', '%!jq -c', {})

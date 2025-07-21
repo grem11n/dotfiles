@@ -5,3 +5,4 @@ window-decoration = false
 theme = "ayu mirage"
 initial-command = "/opt/homebrew/bin/tmux new-session -A -D -s main"
 link-url = true
+macos-option-as-alt = left

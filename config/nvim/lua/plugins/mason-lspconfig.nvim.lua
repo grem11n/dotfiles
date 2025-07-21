@@ -15,7 +15,7 @@ return { "williamboman/mason-lspconfig.nvim",
       "gopls", -- Go
       "graphql", -- GraphQL
       "helm_ls", -- Helm
-      "jedi_language_server", -- Python
+      --"jedi_language_server", -- Python
       "jsonls", -- JSON
       "lua_ls", -- LUA
       "marksman", -- Markdown

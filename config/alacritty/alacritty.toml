@@ -1,13 +1,9 @@
-import = [
-    "~/.config/alacritty/themes/themes/xterm.toml",
-]
-
-#[shell]
-#program = "/opt/homebrew/bin/tmux"
-#args = ["new-session", "-A", "-D", "-s", "main"]
+[terminal.shell]
+program = "/opt/homebrew/bin/tmux"
+args = ["new-session", "-A", "-D", "-s", "main"]
 
 [font]
-size = 20
+size = 24
 
 [font.bold]
 family = "Mononoki Nerd Font"
@@ -23,4 +19,21 @@ family = "Mononoki Nerd Font"
 style = "Regular"
 
 [window]
+decorations = "none"
 opacity = 0.90
+option_as_alt = "OnlyLeft"
+
+[general]
+import = [
+    "~/.config/alacritty/themes/themes/ayu_mirage.toml",
+]
+
+[[keyboard.bindings]]
+key   = "Left"
+mods  = "Command"
+chars = "\u0001"     # ASCII 0x01  =  Ctrl-A  =  beginning-of-line
+
+[[keyboard.bindings]]
+key   = "Right"
+mods  = "Command"
+chars = "\u0005"     # ASCII 0x05  =  Ctrl-E  =  end-of-line

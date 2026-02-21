@@ -192,6 +192,7 @@ test -e "${HOME}/.iterm2_shell_integration.zsh" && source "${HOME}/.iterm2_shell
 # source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
 # PS1='$(kube_ps1)'$PS1
 alias kc="kubectl"
+alias k="kubectl"
 export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
 
 # Set k8s namespace

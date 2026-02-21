@@ -30,17 +30,17 @@ require("mason").setup()
 --    capabilities = capabilities,
 --    cmd = {'java', '-jar', '/Users/yurii.rochniak/.vim/lsps/groovy-language-server-all.jar'};
 --}
-require'lspconfig'.gopls.setup{
+vim.lsp.enable('gopls', {
   cmd = { "gopls", "-remote=auto" },
   capabilities = capabilities,
-}
-require'lspconfig'.golangci_lint_ls.setup{
+})
+vim.lsp.enable('golangci_lint_ls', {
   capabilities = capabilities
-}
-require'lspconfig'.diagnosticls.setup{
+})
+vim.lsp.enable('diagnosticls' ,{
   capabilities = capabilities,
-}
-require'lspconfig'.yamlls.setup{
+})
+vim.lsp.enable('yamlls', {
   on_attach = function(client, bufnr)
     -- Disable LSP for Helm templates (files with .yaml or .yml extension inside 'templates' directory)
     if vim.fn.expand('%:p'):match('.*/templates/.*%.ya?ml$') then
@@ -57,20 +57,19 @@ require'lspconfig'.yamlls.setup{
         redhat = { telemetry = { enabled = false } },
 	},
   },
-}
-require'lspconfig'.dockerls.setup{
-  capabilities = capabilities,
-}
-require'lspconfig'.bashls.setup{
-  capabilities = capabilities,
-}
-require'lspconfig'.jsonls.setup{
-  capabilities = capabilities,
-}
-require'lspconfig'.ts_ls.setup{
-  capabilities = capabilities,
-}
-require'lspconfig'.eslint.setup{
+})
+
+vim.lsp.enable({
+    'dockerls',
+    'bashls',
+    'jsonls',
+    'ts_ls',
+    'pyright',
+    'ruff',
+    'terraformls',
+})
+
+vim.lsp.enable('eslint', {
   capabilities = capabilities,
   bin = 'eslint', -- or `eslint_d`
   code_actions = {
@@ -89,13 +88,10 @@ require'lspconfig'.eslint.setup{
     report_unused_disable_directives = false,
     run_on = "type", -- or `save`
   },
-}
-require'lspconfig'.bashls.setup{
-  capabilities = capabilities,
-}
+})
 
 vim.env.PYENV_VERSION = vim.fn.system('pyenv version'):match('(%S+)%s+%(.-%)')
-require'lspconfig'.pylsp.setup{
+vim.lsp.enable('pylsp', {
   on_attach = custom_attach,
   settings = {
     configurationSources = {"flake8"},
@@ -140,22 +136,8 @@ require'lspconfig'.pylsp.setup{
       debounce_text_changes = 200,
   },
   capabilities = capabilities,
-}
-
-require("lspconfig").pyright.setup {
-  capabilities = capabilities,
-}
-
-require("lspconfig").ruff.setup {
-  capabilities = capabilities,
-}
-
-require'lspconfig'.terraformls.setup{
-  capabilities = capabilities,
-  on_attach = on_attach,
-}
-
-require'lspconfig'.helm_ls.setup {
+})
+vim.lsp.enable('helm_ls', {
   settings = {
     ['helm-ls'] = {
       yamlls = {
@@ -163,4 +145,4 @@ require'lspconfig'.helm_ls.setup {
       }
     }
   }
-}
+})

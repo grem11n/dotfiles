@@ -19,7 +19,7 @@ family = "Mononoki Nerd Font"
 style = "Regular"
 
 [window]
-decorations = "none"
+decorations = "Buttonless"
 opacity = 0.90
 option_as_alt = "OnlyLeft"
 

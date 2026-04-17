@@ -22,7 +22,7 @@ return { "williamboman/mason-lspconfig.nvim",
       "pyright", -- Python
       "ruff", -- Python
       "taplo", -- TOML
-      "terraformls", -- Terraform
+      -- "terraformls", -- Terraform
       "ts_ls", -- Typescript
       "yamlls", -- YAML
       -- "groovyls", -- Groovy

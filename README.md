@@ -17,24 +17,11 @@ Manged by GNU Stow
 
 ## Usage
 
-Install some system dependencies:
+Order of execution matters!
 
 ```bash
-sudo dnf install gcc clang
-sudo dnf install glib2 glib2-devel
-sudo dnf install python3-devel
-sudo dnf install openssl-devel
-sudo dnf install libyaml-devel
-```
-
-Create symlinks with `stow`:
-
-```bash
-make stow
-```
-
-Run `mise`:
-
-```bash
-mise install
+make system    # installs system packages
+make stow      # create symlinks
+make mise      # install devtools
+make shell     # install zsh things
 ```

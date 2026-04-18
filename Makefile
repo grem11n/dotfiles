@@ -10,7 +10,7 @@ endif
 system:
 ifeq ($(UNAME_S),Linux)
 	@sudo dnf copr enable jdxcode/mise
-	@sudo dnf install gcc clang glib2 glib2-devel python3-devel openssl-devel libyaml-devel luarocks
+	@sudo dnf install stow gcc clang glib2 glib2-devel python3-devel openssl-devel libyaml-devel luarocks
 	@sudo dnf install mise
 endif
 

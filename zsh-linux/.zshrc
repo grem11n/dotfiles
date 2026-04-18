@@ -1,0 +1,255 @@
+export GPG_TTY=$(tty)
+# Activate Mise for tools
+eval "$(mise activate zsh)"
+# Path to your oh-my-zsh installation.
+export ZSH=${HOME}/.oh-my-zsh
+export ZPLUG_HOME="$HOME/.local/share/zplug"
+source $ZPLUG_HOME/init.zsh
+export XDG_CONFIG_HOME="$HOME/.config"
+
+# Set name of the theme to load.
+# Look in ~/.oh-my-zsh/themes/
+# Optionally, if you set this to "random", it'll load a random theme each
+# time that oh-my-zsh is loaded.
+#ZSH_THEME="robbyrussell"
+
+# Uncomment the following line to use case-sensitive completion.
+# CASE_SENSITIVE="true"
+
+# Uncomment the following line to use hyphen-insensitive completion. Case
+# sensitive completion must be off. _ and - will be interchangeable.
+# HYPHEN_INSENSITIVE="true"
+
+# Uncomment the following line to disable bi-weekly auto-update checks.
+# DISABLE_AUTO_UPDATE="true"
+
+# Uncomment the following line to change how often to auto-update (in days).
+# export UPDATE_ZSH_DAYS=13
+
+# Uncomment the following line to disable colors in ls.
+# DISABLE_LS_COLORS="true"
+
+# Uncomment the following line to disable auto-setting terminal title.
+# DISABLE_AUTO_TITLE="true"
+
+# Uncomment the following line to enable command auto-correction.
+# ENABLE_CORRECTION="true"
+
+# Uncomment the following line to display red dots whilst waiting for completion.
+# COMPLETION_WAITING_DOTS="true"
+
+# Uncomment the following line if you want to disable marking untracked files
+# under VCS as dirty. This makes repository status check for large repositories
+# much, much faster.
+# DISABLE_UNTRACKED_FILES_DIRTY="true"
+
+# Uncomment the following line if you want to change the command execution time
+# stamp shown in the history command output.
+# The optional three formats: "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
+# HIST_STAMPS="mm/dd/yyyy"
+
+# Would you like to use another custom folder than $ZSH/custom?
+# ZSH_CUSTOM=/path/to/new-custom-folder
+
+# Which plugins would you like to load? (plugins can be found in ~/.oh-my-zsh/plugins/*)
+# Custom plugins may be added to ~/.oh-my-zsh/custom/plugins/
+# Example format: plugins=(rails git textmate ruby lighthouse)
+# Add wisely, as too many plugins slow down shell startup.
+zplug "popstas/zsh-command-time"
+export ZSH_COMMAND_TIME_MIN_SECONDS=15
+zplug "zpm-zsh/colorize"
+zplug "arzzen/calc.plugin.zsh"
+zplug "hlissner/zsh-autopair", defer:2
+# zplug "zpm-zsh/tmux"
+zplug "droctothorpe/kubecolor"
+zplug "ael-code/zsh-colored-man-pages"
+zplug "zsh-users/zsh-syntax-highlighting", defer:2
+zplug "romkatv/powerlevel10k", as:theme, depth:1
+zplug "zsh-users/zsh-autosuggestions", depth:1
+zplug "unixorn/fzf-zsh-plugin", depth:1
+zplug "reegnz/jq-zsh-plugin", depth:1
+zplug "plugins/git", from:oh-my-zsh, if:"(( $+commands[git] ))"
+
+export LS_COLORS='di=0;36:fi=0:ln=31:pi=5:so=5:bd=5:cd=5:or=31:mi=0:ex=0;32:*.rpm=0:*.tar=0;31'
+
+zplug load
+
+# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
+# Initialization code that may require console input (password prompts, [y/n]
+# confirmations, etc.) must go above this block; everything else may go below.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+source $ZSH/oh-my-zsh.sh
+
+# You may need to manually set your language environment
+export LANG="en_US.UTF-8"
+export LC_COLLATE="en_US.UTF-8"
+export LC_CTYPE="en_US.UTF-8"
+export LC_MESSAGES="en_US.UTF-8"
+export LC_MONETARY="en_US.UTF-8"
+export LC_NUMERIC="en_US.UTF-8"
+export LC_TIME="en_US.UTF-8"
+export LC_ALL=
+
+# Preferred editor for local and remote sessions
+if [[ -n $SSH_CONNECTION ]]; then
+  export EDITOR='vim'
+else
+  export EDITOR='nvim'
+fi
+
+# Compilation flags
+# export ARCHFLAGS="-arch x86_64"
+
+# ssh
+# export SSH_KEY_PATH="~/.ssh/dsa_id"
+
+# Set personal aliases, overriding those provided by oh-my-zsh libs,
+# plugins, and themes. Aliases can be placed here, though oh-my-zsh
+# users are encouraged to define aliases within the ZSH_CUSTOM folder.
+# For a full list of active aliases, run `alias`.
+#
+# Example aliases
+# alias zshconfig="mate ~/.zshrc"
+# alias ohmyzsh="mate ~/.oh-my-zsh"
+####
+
+# For Toshy Mac-keys layout remap
+export PATH="$PATH:$HOME/.local/bin"
+
+alias ll="ls -l"
+alias la="ls -lah"
+alias d="dirs -v"
+
+#Golang
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH=~/Golang
+export PATH="$GOPATH/bin:$PATH"
+go_test() {
+  go test $* | sed ''/PASS/s//$(printf "\033[32mPASS\033[0m")/'' | sed ''/SKIP/s//$(printf "\033[34mSKIP\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/'' | sed ''/FAIL/s//$(printf "\033[31mFAIL\033[0m")/'' | GREP_COLOR="01;33" egrep --color=always '\s*[a-zA-Z0-9\-_.]+[:][0-9]+[:]|^'
+}
+
+# Rust
+export PATH=$PATH:~/.cargo/bin
+
+# Search by public IP
+function pubip {
+  if [ $# -ge 1 ] ; then
+    if [ $# -lt 2 ] ; then region=eu-west-1 ; else region=$2 ; fi
+      if [ $# -lt 3 ] ; then profile=default ; else profile=$3 ; fi
+        aws ec2 describe-instances --query 'Reservations[].Instances[].PublicIpAddress' --output text --instance-ids $1 --region $region --profile $profile
+  fi
+}
+
+# Kube
+# source "/usr/local/opt/kube-ps1/share/kube-ps1.sh"
+# PS1='$(kube_ps1)'$PS1
+alias kc="kubectl"
+alias k="kubectl"
+export PATH="${KREW_ROOT:-$HOME/.krew}/bin:$PATH"
+
+# Set k8s namespace
+function kns {
+    if [ $# -eq 0 ] ; then
+        echo "No namepsace specified!"
+    fi
+    if [ $# -gt 1 ] ; then
+        echo "You may specify only one namespace!"
+    fi
+    if [ $# -eq 1 ] ; then
+        kubectl config set-context $(kubectl config current-context) --namespace=$1
+    fi
+}
+
+
+export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+#source ${HOMEBREW_DIR}/share/zsh-autosuggestions/zsh-autosuggestions.zsh
+
+# Tfenv
+#export PATH="${HOMEBREW_DIR}/Cellar/tfenv/$(tfenv --version | cut -d ' ' -f2 | tr -d '\n')/bin:$PATH"
+
+# Restart wifi
+function wifit () {
+        networksetup -setairportpower Wi-Fi off
+        sleep 1
+        networksetup -setairportpower Wi-Fi on
+}
+
+alias tf_vend_rm='find . -name vendor -type d -exec rm -rf {} \;'
+alias tf_cache_rm='find . -name .terraform -type d -exec rm -rf {} \;'
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Fuzzy finder
+source $HOME/.config/fzfrc
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+eval "$(fzf --zsh)"
+# -- Use fd instead of fzf --
+
+#export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
+export FZF_DEFAULT_COMMAND="rg --files --hidden --smart-case --glob '!.git/*'"
+export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
+export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
+
+# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
+# - The first argument to the function ($1) is the base path to start traversal
+# - See the source code (completion.{bash,zsh}) for the details.
+_fzf_compgen_path() {
+  fd --hidden --exclude .git . "$1"
+}
+
+# Use fd to generate the list for directory completion
+_fzf_compgen_dir() {
+  fd --type=d --hidden --exclude .git . "$1"
+}
+
+# FZF Git Integration
+source ${XDG_CONFIG_HOME}/fzf-git.sh
+
+# FZF Preview
+export FZF_CTRL_T_OPTS="--preview 'bat -n --color=always --line-range :500 {}'"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
+
+# Advanced customization of fzf options via _fzf_comprun function
+# - The first argument to the function is the name of the command.
+# - You should make sure to pass the rest of the arguments to fzf.
+_fzf_comprun() {
+  local command=$1
+  shift
+
+  case "$command" in
+    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
+    export|unset) fzf --preview "eval 'echo $'{}"         "$@" ;;
+    ssh)          fzf --preview 'dig {}'                   "$@" ;;
+    *)            fzf --preview "bat -n --color=always --line-range :500 {}" "$@" ;;
+  esac
+}
+
+# thefuck alias
+#eval $(thefuck --alias)
+#eval $(thefuck --alias fk)
+
+# ---- Zoxide (better cd) ----
+eval "$(zoxide init zsh)"
+
+alias cd="z"
+
+# Ruby
+#export RBENV_SHELL=zsh
+#export PATH="$HOME/.rbenv/bin:$PATH"
+#eval "$(rbenv init - zsh)"
+
+# Add RVM to PATH for scripting. Make sure this is the last PATH variable change.
+#export PATH="$PATH:$HOME/.rvm/bin"
+
+# Python
+#eval "$(pyenv init -)"
+#eval "$(pyenv virtualenv-init -)"
+
+# Add ~/.local/bin to PATH
+if [ -d "${HOME}/.local/bin" ] && [[ ":${PATH}:" != *":${HOME}/.local/bin:"* ]]; then
+    PATH="${HOME}/.local/bin:${PATH}"
+fi

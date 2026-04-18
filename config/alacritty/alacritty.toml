@@ -1,9 +1,9 @@
 [terminal.shell]
-program = "/opt/homebrew/bin/tmux"
+program = "tmux"
 args = ["new-session", "-A", "-D", "-s", "main"]
 
 [font]
-size = 24
+size = 16
 
 [font.bold]
 family = "Mononoki Nerd Font"

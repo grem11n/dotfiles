@@ -1,0 +1,32 @@
+[core]
+    excludesfile = ~/.gitignore
+    editor = nvim
+    pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true  # use n and N to move between diff sections
+    dark = true      # or light = true, or omit for auto-detection
+[merge]
+    conflictStyle = zdiff3
+[diff]
+    tool = delta
+[difftool]
+    prompt = false
+    trustExitCode = true
+[yurii]
+	rochniak = Yurii Rochniak
+[user]
+	email = yrochnyak@gmail.com
+	name = Yurii Rochniak
+[push]
+	default = matching
+[alias]
+	st = status
+	ci = commit
+	pr = pull --rebase
+        chk = checkout
+        br = branch
+        kd = difftool --no-symlinks --dir-diff
+[diff "sopsdiffer"]
+	textconv = sops -d

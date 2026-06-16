@@ -3,56 +3,19 @@ return {
     "nvim-lualine/lualine.nvim",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     config = function()
+        -- palette for diff / diagnostics component colors
         local c = {
-            bg        = '#1F1F23',
-            black     = '#1B1B1B',
-            skyblue   = '#50B0F0',
-            cyan      = '#009090',
-            fg        = '#D0D0D0',
-            green     = '#60A040',
-            oceanblue = '#0066cc',
-            orange    = '#FF9000',
-            red       = '#D10000',
-            violet    = '#9E93E8',
-            white     = '#FFFFFF',
-            yellow    = '#E1E120',
-        }
-
-        local theme = {
-            normal = {
-                a = { fg = c.black, bg = c.skyblue,   gui = 'bold' },
-                b = { fg = c.white, bg = c.oceanblue, gui = 'bold' },
-                c = { fg = c.fg,    bg = c.bg },
-                x = { fg = c.fg,    bg = c.bg },
-                y = { fg = c.white, bg = c.oceanblue, gui = 'bold' },
-                z = { fg = c.black, bg = c.skyblue,   gui = 'bold' },
-            },
-            insert = {
-                a = { fg = c.black, bg = c.green,  gui = 'bold' },
-                z = { fg = c.black, bg = c.green,  gui = 'bold' },
-            },
-            visual = {
-                a = { fg = c.black, bg = c.violet, gui = 'bold' },
-                z = { fg = c.black, bg = c.violet, gui = 'bold' },
-            },
-            replace = {
-                a = { fg = c.black, bg = c.red,    gui = 'bold' },
-                z = { fg = c.black, bg = c.red,    gui = 'bold' },
-            },
-            command = {
-                a = { fg = c.black, bg = c.yellow, gui = 'bold' },
-                z = { fg = c.black, bg = c.yellow, gui = 'bold' },
-            },
-            inactive = {
-                a = { fg = c.white, bg = c.oceanblue, gui = 'bold' },
-                b = { fg = c.fg,    bg = c.bg },
-                c = { fg = c.fg,    bg = c.bg },
-            },
+            cyan    = '#009090',
+            green   = '#60A040',
+            orange  = '#FF9000',
+            red     = '#D10000',
+            skyblue = '#50B0F0',
+            yellow  = '#E1E120',
         }
 
         require('lualine').setup({
             options = {
-                theme                = theme,
+                theme                = 'ayu',
                 component_separators = { left = '', right = '' },
                 section_separators = { left = '', right = '' },
                 globalstatus         = false,

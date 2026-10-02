@@ -9,8 +9,7 @@ vim.keymap.set('n', '<C-H>', '<C-W><C-H>')
 
 -- Remaps for LSP
 vim.keymap.set('n', '<c-]>', '<cmd>lua vim.lsp.buf.definition()<CR>', { silent = true })
-vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', { silent = true })
-vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.implementation()<CR>', { silent = true })
+vim.keymap.set('n', 'K', '<cmd>lua vim.lsp.buf.hover()<CR>', { silent = true }) vim.keymap.set('n', 'gD', '<cmd>lua vim.lsp.buf.implementation()<CR>', { silent = true })
 --vim.keymap.set('n', '<c-k>', '<cmd>lua vim.lsp.buf.signature_help()<CR>', { silent = true })
 vim.keymap.set('n', '1gD', '<cmd>lua vim.lsp.buf.type_definition()<CR>', { silent = true })
 vim.keymap.set('n', 'gr', '<cmd>lua vim.lsp.buf.references()<CR>', { silent = true })
@@ -31,7 +30,6 @@ vim.keymap.set('n', '<C-f>', function() require('fzf-lua').grep_cword() end)
 
 -- user commands
 vim.api.nvim_create_user_command('Nt', 'lua Snacks.explorer.open()', {}) -- file tree
-vim.api.nvim_create_user_command('So', 'SymbolsOutline', {})
 vim.api.nvim_create_user_command('Ppj', '%!jq', {})
 vim.api.nvim_create_user_command('Upj', '%!jq -c', {})
 vim.api.nvim_create_user_command('Gm', 'GitMessenger', {})

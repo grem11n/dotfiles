@@ -13,6 +13,10 @@ ifeq ($(UNAME_S),Linux)
 	@sudo dnf install stow gcc clang glib2 glib2-devel python3-devel openssl-devel libyaml-devel luarocks
 	@sudo dnf install mise
 endif
+ifeq ($(UNAME_S),Darwin)
+	# TODO: Install Brew
+	@brew install mise stow
+endif
 
 mise:
 	@mise install
@@ -29,8 +33,12 @@ shell:
 	fi
 
 stow:
+	# Workaround for corporate gitconfig
+ifeq ($(UNAME_S),Darwin)
+	@touch ~/.gitconfig-preply
+endif
 	@mkdir -p ~/.config
-	@stow --verbose --target=$$HOME/.ssh ssh
+	#@stow --verbose --target=$$HOME/.ssh ssh
 	@stow --verbose --target=$$HOME/ $(ZSH_DIR)
 	@stow --verbose --target=$$HOME/ tmux
 	@stow --verbose --target=$$HOME/ git

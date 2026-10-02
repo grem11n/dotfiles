@@ -31,3 +31,5 @@
         kd = difftool --no-symlinks --dir-diff
 [diff "sopsdiffer"]
 	textconv = sops -d
+[init]
+	defaultBranch = main
